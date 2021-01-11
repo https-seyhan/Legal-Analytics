@@ -32,7 +32,7 @@ class Document:
                                         check_extractable=True):
                 self.page_interpreter.process_page(page)
             
-            text = self.file_handle.getvalue()
+            text = self.file_handle.getvalue() # whole document in text
             list.append(text)
         #list.to_csv('pdftotext.csv')
         #print("List ", list)
@@ -44,6 +44,9 @@ class Document:
         #print(text)
         
         doc = self.nlp(text)
+        # print tokens of the text
+        #print("Text tokens : ", [token.text for token in doc])
+        
         #remove stop wods 
         cleanDoc = [t.text for t in doc if t.is_stop != True and t.is_punct != True]
         print("Size :", len(cleanDoc))
@@ -51,7 +54,8 @@ class Document:
         # convert list ot nlp doc
         cleanDoc = Doc(self.nlp.vocab, words=cleanDoc)
         # Tokens of the document
-        tokens = [t.text for t in doc if t.is_stop != True and t.is_punct != True]
+        #tokens = [t.text for t in doc if t.is_stop != True and t.is_punct != True]
+        self.__wordSimilarity(cleanDoc)
         #nouns = [t.lemma_ for t in doc if t.is_stop != True and t.is_punct != True and t.pos_ =="NOUN"]
         #verbs = [t.lemma_ for t in doc if t.is_stop != True and t.is_punct != True and t.pos_ =="VERB"]
         nouns = [t.lemma_ for t in doc if t.pos_ == "NOUN"]
@@ -90,7 +94,13 @@ class Document:
         adj_freq = Counter(adjectives)
         common_adjs = adj_freq.most_common(50)
         print("Common adjectives ", common_adjs)
-        
+    
+    def __wordSimilarity(self, doc):
+
+        for token1 in doc:
+            for token2 in doc:
+                if token1.similarity(token2) > 0.5 and token1.similarity(token2) < 1:
+                    print(token1.text, token2.text, token1.similarity(token2))
         
         
         
