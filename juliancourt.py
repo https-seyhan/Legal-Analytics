@@ -2,7 +2,7 @@ import os
 import io
 import json
 import subprocess
-subprocess.call("/home/saul/emails")
+#subprocess.call("/home/saul/emails")
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
@@ -10,8 +10,11 @@ from pdfminer.pdfpage import PDFPage
 from spacy.matcher import PhraseMatcher, Matcher
 from spacy.tokens import Doc, Span, Token
 import spacy
+from gensim.models import Word2Vec
 from collections import Counter
-import QML_application.py
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+#import QML_application.py
 
 
 
@@ -45,26 +48,36 @@ class Document:
         #list.to_csv('pdftotext.csv')
         self.converter.close()
         self.file_handle.close()
+        #print(text)
         self.__courtAnalysis(text)
         
     def __courtAnalysis(self, text):
         print(type(text))
-        # Add law jarjon and tems to stop words
+        # Add law jarjon and terms to stop words
         customize_stop_words = [
         'the', 'to', " \x0c", ' ', 'Mr.', 'Dr.', 'v', 'of', 'case', 'section', 'defence',
-        'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK'
+        'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK',
+        '“'
         ]
         for w in customize_stop_words:
             self.nlp.vocab[w].is_stop = True
+            
+        customize_non_punct = [
+        '.'
+        ]
+        for w in customize_non_punct:
+            self.nlp.vocab[w].is_punct = False
         
         doc = self.nlp(text)
 
         #remove stop wods 
         cleanDoc = [t.text for t in doc if t.is_stop != True and t.whitespace_ != True and t.text.isspace() != True and t.is_punct != True]
-        print("Size :", len(cleanDoc))
+        #cleanDoc = [t.text for t in doc if t.is_stop != True and t.whitespace_ != True and t.text.isspace() != True]
+        #print("Size :", len(cleanDoc))
         
         # convert List to String
         listToStr = ' '.join([str(elem) for elem in cleanDoc]) 
+        print(listToStr)
         cleanDoc = self.nlp(listToStr)
         
         # convert list ot nlp doc
@@ -79,7 +92,7 @@ class Document:
         adjectives = [t.lemma_ for t in cleanDoc if t.pos_ == "ADJ"]
         others = [t.lemma_ for t in cleanDoc if t.pos_ != "VERB" and t.pos_ != "NOUN" and t.pos_ != "ADJ" and t.pos_ != "NUM"]
         
-        self.__verbAnalysis(verbs)
+        #self.__verbAnalysis(verbs)
         #self.__nounAnalysis(nouns)
         #self.__adjectiveAnalysis(adjectives)
         #self.__otherAnalysis(others)
@@ -96,6 +109,8 @@ class Document:
         # Find named entities, phrases and concepts
         #for entity in doc.ents:
             #print(entity.text, entity.label_)
+            
+    # Get Bag of Words (BoW) of top 10 words
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
         common_verbs = verb_freq.most_common(10)
@@ -172,6 +187,54 @@ class Document:
                 if token1.similarity(token2) > 0.5 and token1.similarity(token2) < 1:
                     print(token1.text, token2.text, token1.similarity(token2))
         
-        
+    def getcbow(dataset):
+
+        sentences = []
+        vectorised_codes = []
+    
+
+        #bugs = pd.read_csv('bug-metrics.csv', sep= ',')
+        #print(bugs.columns)
+
+        ast = [row.split('::') for row in dataset['classname']]
+        #print('ASTs ', ast[:2])
+        #the input to the cbow is list of list of each line
+        #size of the word vector of a given token must be equal to embedding_dim of the LSTM model
+        cbowmodel = Word2Vec(ast, min_count=1, size= embedding_dims, workers=3, window=3, sg=0)
+        #print(ast[:2])
+        print (' CBOW model ', cbowmodel)
+    
+        #Test cbow model
+        print("Test CBOW on the data")
+        print(cbowmodel['eclipse'])
+    
+        classes = dataset['classname']
+
+        for codes in classes:
+
+            linecode = []
+            tokens = codes.split('::')
+            #print(tokens)
+            sentences.append(tokens)
+            for token in tokens:
+                try:
+                    #print("Token ", token)
+                    #linecode.append(token)
+                    #print("Word Vector ", len(cbowmodel[token]))
+                    linecode.append(cbowmodel[token])
+                except KeyError:
+                    pass
+        vectorised_codes. append(linecode)
+    #print(len(linecode))
+    #print(linecode)
+
+
+    #print('Line codes ', linecode)
+    #print('Vectorised Codes ', vectorised_codes[0])
+    #print('Vectorised Codes ', len(vectorised_codes))
+    #print(f'Sentences: {sentences}')
+
+        return vectorised_codes
+
 if __name__ == '__main__':
     courtdoco = Document("usaassangejudgement.pdf")
