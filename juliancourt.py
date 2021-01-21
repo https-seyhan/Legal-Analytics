@@ -205,7 +205,7 @@ class Document:
         print(data)
 
     def __wordAnalysis(self, tokens, nouns, verbs, adjectives, docents):
-        #print(verbs)
+        
         # five most common tokens
         verb_freq = Counter(verbs)
         common_verbs = verb_freq.most_common(50)
