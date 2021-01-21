@@ -20,8 +20,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 #import QML_application.py
 
-
-
 class Document:
     # Class attributes
     resource_manager = PDFResourceManager()
