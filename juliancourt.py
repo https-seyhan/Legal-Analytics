@@ -46,7 +46,7 @@ class Document:
             
             text = self.file_handle.getvalue() # whole document in text
             list.append(text)
-        #list.to_csv('pdftotext.csv')
+        
         self.converter.close()
         self.file_handle.close()
         #print(text)
