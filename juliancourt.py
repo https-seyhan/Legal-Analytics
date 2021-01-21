@@ -163,9 +163,6 @@ class Document:
         categories=list(dataframe)[0:]
         print("Categories ", categories)
         values=dataframe.loc[0].values.flatten().tolist()
-        #print("Values ", values)
-        #values += values[:1]
-        #print("Values ", values)
         y_pos = np.arange(len(categories))
         print('y_pos ', y_pos)
         plt.bar(categories,values, align='center', alpha=0.5, color=(0.1, 0.1, 0.1, 0.1))
