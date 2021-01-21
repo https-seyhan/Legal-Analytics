@@ -1,8 +1,12 @@
 import os
 import io
 import json
+import matplotlib.pyplot as plt
+import numpy as np
 import subprocess
 #subprocess.call("/home/saul/emails")
+import pandas as pd
+from math import pi
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
@@ -56,7 +60,7 @@ class Document:
         # Add law jarjon and terms to stop words
         customize_stop_words = [
         'the', 'to', " \x0c", ' ', 'Mr.', 'Dr.', 'v', 'of', 'case', 'section', 'defence',
-        'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK',
+        'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK','extradition', 'offence', 'information',
         '“'
         ]
         for w in customize_stop_words:
@@ -77,14 +81,14 @@ class Document:
         
         # convert List to String
         listToStr = ' '.join([str(elem) for elem in cleanDoc]) 
-        print(listToStr)
+        #print(listToStr) # Print clean data
         cleanDoc = self.nlp(listToStr)
         
         # convert list ot nlp doc
         #cleanDoc = Doc(self.nlp.vocab, words=cleanDoc)
         # Tokens of the document
         #tokens = [t.text for t in doc if t.is_stop != True and t.is_punct != True]
-        #self.__wordSimilarity(cleanDoc)
+        
         #nouns = [t.lemma_ for t in doc if t.is_stop != True and t.is_punct != True and t.pos_ =="NOUN"]
         #verbs = [t.lemma_ for t in doc if t.is_stop != True and t.is_punct != True and t.pos_ =="VERB"]
         nouns = [t.lemma_ for t in cleanDoc if t.pos_ == "NOUN"]
@@ -93,7 +97,7 @@ class Document:
         others = [t.lemma_ for t in cleanDoc if t.pos_ != "VERB" and t.pos_ != "NOUN" and t.pos_ != "ADJ" and t.pos_ != "NUM"]
         
         #self.__verbAnalysis(verbs)
-        #self.__nounAnalysis(nouns)
+        self.__nounAnalysis(nouns)
         #self.__adjectiveAnalysis(adjectives)
         #self.__otherAnalysis(others)
         #self.__verbSimilarity(verbs)
@@ -114,15 +118,77 @@ class Document:
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
         common_verbs = verb_freq.most_common(10)
-        #print("Common Verbs ", common_verbs)
-        self.__verbSimilarity(common_verbs, verbs)
+        print("Common Verbs ", common_verbs)
+        #self.__verbSimilarity(common_verbs, verbs)
         #self.__converFiletoJSON(common_verbs)
         
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
         common_nouns = noun_freq.most_common(10)
         print("Common Nouns ", common_nouns)
-    
+        #self.__radar(common_nouns)
+        self.__bar(common_nouns)
+
+    def __radar(self, words):
+        graphdata = {}
+        graphdata['group'] = ['A']
+        print('Radar')
+        print(len(words))
+        for _ in range(len(words)):
+            print(words[_][0])
+            graphdata[words[_][0]]= [words[_][1]]
+        
+        print (graphdata)
+        dataframe = pd.DataFrame(graphdata)
+        print(dataframe)
+        
+        categories=list(dataframe)[1:]
+        N = len(categories)
+        
+        values=dataframe.loc[0].drop('group').values.flatten().tolist()
+        values += values[:1]
+        print(values)
+        angles = [n / float(N) * 2 * pi for n in range(N)]
+        angles += angles[:1]
+        
+        ax = plt.subplot(111, polar=True)
+        plt.xticks(angles[:-1], categories, color='grey', size=8)
+        ax.set_rlabel_position(0)
+        plt.yticks([20, 60,  100, 140, 180], 
+        ["20", "60", "100", "140", "180"], color="grey", size=7)
+        plt.ylim(0,max(values))
+        ax.plot(angles, values, linewidth=1, linestyle='solid')
+        ax.fill(angles, values, 'b', alpha=0.1)
+        plt.show()
+
+    def __bar(self, words):
+        #fig = plt.figure()
+        #ax = fig.add_axes([0,0,1,1])
+        graphdata = {}
+        #graphdata['group'] = ['A']
+        print(len(words))
+        for _ in range(len(words)):
+            print(words[_][0])
+            graphdata[words[_][0]]= [words[_][1]]
+        
+        print (graphdata)
+        dataframe = pd.DataFrame(graphdata)
+        print(dataframe)
+        print("Columns ", dataframe.columns)
+        categories=list(dataframe)[0:]
+        print("Categories ", categories)
+        values=dataframe.loc[0].values.flatten().tolist()
+        #print("Values ", values)
+        #values += values[:1]
+        #print("Values ", values)
+        y_pos = np.arange(len(categories))
+        print('y_pos ', y_pos)
+        plt.bar(categories,values, align='center', alpha=0.5, color=(0.1, 0.1, 0.1, 0.1))
+        plt.xticks(y_pos, categories,  rotation=90)
+        plt.subplots_adjust(bottom=0.3, top=0.99)
+        plt.show()
+        #ax = dataframe.plot.bar(x=values, y=categories, rot=0)
+        
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
         common_adjs = adj_freq.most_common(10)
