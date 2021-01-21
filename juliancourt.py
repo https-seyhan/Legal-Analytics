@@ -18,7 +18,10 @@ from gensim.models import Word2Vec
 from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+from spacy.lemmatizer import Lemmatizer
 #import QML_application.py
+
+
 
 class Document:
     # Class attributes
@@ -29,6 +32,7 @@ class Document:
     #nlp = spacy.load("en_core_web_sm")
     nlp = spacy.load("en_core_web_lg")
     os.chdir('/home/saul/Business')
+    
     
     def __init__(self, fileName):
         print("constructor called")
@@ -46,16 +50,19 @@ class Document:
             
             text = self.file_handle.getvalue() # whole document in text
             list.append(text)
-        
+        #list.to_csv('pdftotext.csv')
         self.converter.close()
         self.file_handle.close()
         #print(text)
         self.__courtAnalysis(text)
         
+
+           
     def __courtAnalysis(self, text):
         print(type(text))
-        # Add law jarjon and terms to stop words
-        customize_stop_words = [
+        
+        # Add law jargon and terms to stop words
+        customize_stop_words = ['a.', 'b.', 'c.', 'i.', 'ii', 'iii', 
         'the', 'to', " \x0c", ' ', 'Mr.', 'Dr.', 'v', 'of', 'case', 'section', 'defence',
         'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK','extradition', 'offence', 'information',
         '“'
@@ -92,13 +99,34 @@ class Document:
         verbs = [t.lemma_ for t in cleanDoc if t.pos_ =="VERB"]
         adjectives = [t.lemma_ for t in cleanDoc if t.pos_ == "ADJ"]
         others = [t.lemma_ for t in cleanDoc if t.pos_ != "VERB" and t.pos_ != "NOUN" and t.pos_ != "ADJ" and t.pos_ != "NUM"]
-        
+        #print("Nouns ", nouns)
         #self.__verbAnalysis(verbs)
         self.__nounAnalysis(nouns)
+        self.__lemmatizerDoco(nouns)
         #self.__adjectiveAnalysis(adjectives)
         #self.__otherAnalysis(others)
         #self.__verbSimilarity(verbs)
-            
+
+        #self.__wordAnalysis(tokens, nouns, verbs, adjectives, cleanDoc.ents)
+        #print("Tokens", [t.text for t in cleanDoc],'\n')
+        # Tags in the document 
+        #print("Tags", [(t.text, t.tag_, t.pos_) for t in doc],'\n\n')
+        
+        # Analyze syntax
+        #print("Noun phrases:", [chunk.text for chunk in doc.noun_chunks])
+        #print("Verbs:", [t.lemma_ for t in doc if t.pos_ == "VERB"])
+        # Find named entities, phrases and concepts
+        #for entity in doc.ents:
+            #print(entity.text, entity.label_)
+    
+    def __lemmatizerDoco(self, text):
+        lemmatizer = self.nlp.Defaults.create_lemmatizer()
+        lemm_ = [lemmatizer.lookup(word) for word in text]
+        #print("LEMMA ", lemm_)       
+        lemm_freq = Counter(lemm_)
+        common_lemm = lemm_freq.most_common(10)
+        print("Common Lemmaz ", common_lemm)
+        
     # Get Bag of Words (BoW) of top 10 words
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
@@ -163,6 +191,9 @@ class Document:
         categories=list(dataframe)[0:]
         print("Categories ", categories)
         values=dataframe.loc[0].values.flatten().tolist()
+        #print("Values ", values)
+        #values += values[:1]
+        #print("Values ", values)
         y_pos = np.arange(len(categories))
         print('y_pos ', y_pos)
         plt.bar(categories,values, align='center', alpha=0.5, color=(0.1, 0.1, 0.1, 0.1))
@@ -189,8 +220,9 @@ class Document:
             data[value[0]]= value[1]
         print(data)
 
+     
     def __wordAnalysis(self, tokens, nouns, verbs, adjectives, docents):
-        
+        #print(verbs)
         # five most common tokens
         verb_freq = Counter(verbs)
         common_verbs = verb_freq.most_common(50)
@@ -258,6 +290,7 @@ class Document:
         classes = dataset['classname']
 
         for codes in classes:
+
             linecode = []
             tokens = codes.split('::')
             #print(tokens)
@@ -271,6 +304,15 @@ class Document:
                 except KeyError:
                     pass
         vectorised_codes. append(linecode)
+    #print(len(linecode))
+    #print(linecode)
+
+
+    #print('Line codes ', linecode)
+    #print('Vectorised Codes ', vectorised_codes[0])
+    #print('Vectorised Codes ', len(vectorised_codes))
+    #print(f'Sentences: {sentences}')
+
         return vectorised_codes
 
 if __name__ == '__main__':
