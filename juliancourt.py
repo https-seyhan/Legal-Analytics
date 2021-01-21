@@ -204,7 +204,6 @@ class Document:
             data[value[0]]= value[1]
         print(data)
 
-     
     def __wordAnalysis(self, tokens, nouns, verbs, adjectives, docents):
         #print(verbs)
         # five most common tokens
