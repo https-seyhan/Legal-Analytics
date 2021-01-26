@@ -258,7 +258,6 @@ class Document:
                     print(token1.text, token2.text, token1.similarity(token2))
         
     def getcbow(dataset):
-
         sentences = []
         vectorised_codes = []
     
