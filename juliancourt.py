@@ -55,7 +55,6 @@ class Document:
                
     def __courtAnalysis(self, text):
         print(type(text))
-        
         # Add law jargon and terms to stop words
         customize_stop_words = ['a.', 'b.', 'c.', 'i.', 'ii', 'iii', 
         'the', 'to', " \x0c", ' ', 'Mr.', 'Dr.', 'v', 'of', 'case', 'section', 'defence',
