@@ -240,7 +240,6 @@ class Document:
                     print(token1.text, token2.text, token1.similarity(token2))
 
     def __verbSimilarity(self, verbs, document):
-    
         toplistToStr = []
         for value in verbs:
             print(value[0])
