@@ -234,7 +234,6 @@ class Document:
         print("Common adjectives ", common_adjs)
     
     def __wordSimilarity(self, verbs, document):
-
         for token1 in verbs:
             for token2 in document:
                 if token1.similarity(token2) > 0.9:
