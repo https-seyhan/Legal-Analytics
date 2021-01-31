@@ -1,4 +1,3 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
 import pandas as pd
 from math import pi
@@ -15,6 +14,7 @@ from spacy.lang.en import English
 from gensim.models import Word2Vec
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+import numpy as np
 import operator
 import io
 import os
@@ -57,13 +57,13 @@ class Document:
         self.__textAnalysis(text)
         
     def __textAnalysis(self, text):
-        print(type(text))
+        #print(type(text))
         
         # Add law jargon and terms to stop words
         customize_stop_words = ['a.', 'b.', 'c.', 'i.', 'ii', 'iii', 
         'the', 'to', " \x0c", ' ', 'Mr.', 'Dr.', 'v', 'of', 'case', 'section', 'defence',
         'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK','extradition', 'offence', 'information',
-        '“'
+        '“', '-v-', 'A.', 'B.', '(', ')', 'wlr'
         ]
         for w in customize_stop_words:
             self.nlp.vocab[w].is_stop = True
@@ -82,8 +82,8 @@ class Document:
         #cleanDoc = [t.text for t in doc if t.is_stop != True and t.whitespace_ != True and t.text.isspace() != True]
         #print("Size :", len(cleanDoc))
         
-        # convert List to String
-        listToStr = ' '.join([str(elem) for elem in cleanDoc]) 
+        # convert List to String not include strings less then 3
+        listToStr = ' '.join([str(elem) for elem in cleanDoc if len(elem) > 2]) 
         #print(listToStr) # Print clean data
         cleanDoc = self.nlp(listToStr)
         #print(" Clean Doc ", cleanDoc)
@@ -122,8 +122,9 @@ class Document:
         # Find named entities, phrases and concepts
         #for entity in doc.ents:
             #print(entity.text, entity.label_)        
+            
     def __tokenizeDoco(self, doc):
-        vec = CountVectorizer(min_df =0.001, max_df=0.95) # Convert a collection of text documents to a matrix of token counts
+        #vec = CountVectorizer(min_df =0.001, max_df=0.95) # Convert a collection of text documents to a matrix of token counts
         #tokenize = self.tokenizer(text)
         #sentences = [sent.string.strip() for sent in text.sents]
         #print(sentences)
@@ -131,37 +132,75 @@ class Document:
         for sent in doc.sents:
             sents_list.append(sent.text)
         #print(sents_list)
-        bow_vector = CountVectorizer(tokenizer = sents_list, ngram_range=(1,1))
+        #bow_vector = CountVectorizer(tokenizer = sents_list, ngram_range=(1,1))
         #print(bow_vector)
-        tfidf_vector = TfidfVectorizer(tokenizer = sents_list)
+        #tfidf_vector = TfidfVectorizer()
+        tfidf_vector = TfidfVectorizer(smooth_idf=False, sublinear_tf=False, norm=None, analyzer='word')
         #print(tfidf_vector)
-        model = vec.fit_transform(sents_list)
+        #model = tfidf_vector.fit_transform(sents_list)
+        model = tfidf_vector.fit(sents_list)
+        transformed_model = model.transform(sents_list)
+        #print("Model Feature Names ", tfidf_vector.get_feature_names())
+        #print(tfidf_vector.vocabulary_)
+        #print(tfidf_vector.idf_)
+        #print("Model Start ")
         #print("Model ", model)
-        print(type(sents_list))
+        
+        #weight_dict = dict(zip(tfidf_vector.get_feature_names(), tfidf_vector.idf_))
+        weight_dict = dict(zip(model.get_feature_names(), tfidf_vector.idf_))
+        print("Weight Dict ", weight_dict)
+        #print(type(sents_list))
+        
+        #Weight of words per document
+        print( "Word weight per document ", transformed_model.toarray())
+        max_val = transformed_model.max(axis=0).toarray().ravel()
+        
+        sort_by_tfidf = max_val.argsort()
+        
+        feature_names = np.array(tfidf_vector.get_feature_names())
+        print("Features with lowest tfidf:\n{}".format(feature_names[sort_by_tfidf[:10]]))
+
+        print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
+
+        
         sentenceCount = 0
         #print(vec.get_feature_names())
         while len(sents_list) > sentenceCount:
-            self.__getPurpose(model, sents_list[sentenceCount], sentenceCount)
+            #self.__getPurpose(model, sents_list[sentenceCount], sentenceCount)
             sentenceCount += 1
         
     def __getPurpose(self, model, clean_text, sentenceNum):
-        # print("Model Values ", len(model[0].todense()))
-        print("Index Num ", sentenceNum)
+        
+        #print("Model Values ", model[0])
+        print("Sentence Num ", sentenceNum)
         # get weights of words
         wordweights = model[sentenceNum].data
+        
         #print(" Clean Text ", clean_text)
         words = clean_text.split(" ")
+        #remove duplicates in list
+        words = list(dict.fromkeys(words))
         print("Words ", words)
+        print("Weights ", wordweights, '\n')
         sentencepurpose = {}
+        word = 0
+        print("Sentence Size ", len(words), '\n')
+        print("Weight Size ", len(wordweights), '\n')
         #get tfidf vectors and insert into a dictionary
-        for word in range(len(words) + 2):
-            print("Len ", len(words))
-            print("word ", word)
-            print(words[word])
-            print("Range ", range(len(wordweights)+ 1))
+        while len(words) > word:
+            #print("Len ", len(words))
+            #print("word ", word)
+            #print("Word Size ", len(words) )
+            
+            #print(words[word])
             #print(wordweights[word])
+            #print("Key ", words[word])
+            #print("Weight ", wordweights[word])
             sentencepurpose[words[word]] = wordweights[word]
-            print("Sentence ", sentencepurpose[words[word]])
+            #print("Sentence ", sentencepurpose[words[word]])
+            
+            word += 1
+        print("END!!!!!!!!")
 
         sentencepurpose = dict(sorted(sentencepurpose.items(), key=operator.itemgetter(1), reverse=True))
         #print("Purpose ", sentencepurpose)
