@@ -14,6 +14,7 @@ from spacy.lang.en import English
 from gensim.models import Word2Vec
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+from scipy import linalg
 import numpy as np
 import operator
 import io
@@ -87,7 +88,8 @@ class Document:
         #print(listToStr) # Print clean data
         cleanDoc = self.nlp(listToStr)
         #print(" Clean Doc ", cleanDoc)
-        self.__tokenizeDoco(cleanDoc)
+        #self.__tokenizeDoco(cleanDoc)
+        self.__svdDecomp(cleanDoc)
         # convert list ot nlp doc
         #cleanDoc = Doc(self.nlp.vocab, words=cleanDoc)
         # Tokens of the document
@@ -110,6 +112,7 @@ class Document:
         #self.__adjectiveAnalysis(adjectives)
         #self.__otherAnalysis(others)
         #self.__verbSimilarity(verbs)
+        
 
         #self.__wordAnalysis(tokens, nouns, verbs, adjectives, cleanDoc.ents)
         #print("Tokens", [t.text for t in cleanDoc],'\n')
@@ -124,7 +127,6 @@ class Document:
             #print(entity.text, entity.label_)        
             
     def __tokenizeDoco(self, doc):
-        #vec = CountVectorizer(min_df =0.001, max_df=0.95) # Convert a collection of text documents to a matrix of token counts
         #tokenize = self.tokenizer(text)
         #sentences = [sent.string.strip() for sent in text.sents]
         #print(sentences)
@@ -132,8 +134,7 @@ class Document:
         for sent in doc.sents:
             sents_list.append(sent.text)
         #print(sents_list)
-        #bow_vector = CountVectorizer(tokenizer = sents_list, ngram_range=(1,1))
-        #print(bow_vector)
+
         #tfidf_vector = TfidfVectorizer()
         tfidf_vector = TfidfVectorizer(smooth_idf=False, sublinear_tf=False, norm=None, analyzer='word')
         #print(tfidf_vector)
@@ -168,6 +169,19 @@ class Document:
         while len(sents_list) > sentenceCount:
             #self.__getPurpose(model, sents_list[sentenceCount], sentenceCount)
             sentenceCount += 1
+    
+    def __svdDecomp(self, doc):
+    
+        sents_list = []
+        for sent in doc.sents:
+            sents_list.append(sent.text)
+        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95) # Convert a collection of text documents to a matrix of token counts
+        print(bow_vector)
+        
+        vectors = bow_vector.fit_transform(sents_list).todense()
+        print (" Vectors ", vectors)
+        
+        U, s, Vh = linalg.svd(vectors, full_matrices=False)
         
     def __getPurpose(self, model, clean_text, sentenceNum):
         
