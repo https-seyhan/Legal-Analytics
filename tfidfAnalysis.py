@@ -14,9 +14,11 @@ from spacy.lang.en import English
 from gensim.models import Word2Vec
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+#from sklearn.feature_extraction import stop_words
 from scipy import linalg
 import numpy as np
 import operator
+import matplotlib.pyplot as plt
 import io
 import os
 os.chdir('/home/saul/Business')
@@ -141,7 +143,7 @@ class Document:
         #model = tfidf_vector.fit_transform(sents_list)
         model = tfidf_vector.fit(sents_list)
         transformed_model = model.transform(sents_list)
-        #print("Model Feature Names ", tfidf_vector.get_feature_names())
+        print("Model Feature Names ", tfidf_vector.get_feature_names())
         #print(tfidf_vector.vocabulary_)
         #print(tfidf_vector.idf_)
         #print("Model Start ")
@@ -173,15 +175,32 @@ class Document:
     def __svdDecomp(self, doc):
     
         sents_list = []
+        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts
+
+        
         for sent in doc.sents:
             sents_list.append(sent.text)
-        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95) # Convert a collection of text documents to a matrix of token counts
-        print(bow_vector)
+        
+        #print(bow_vector)
         
         vectors = bow_vector.fit_transform(sents_list).todense()
         print (" Vectors ", vectors)
-        
+        vocab = np.array(bow_vector.get_feature_names())
         U, s, Vh = linalg.svd(vectors, full_matrices=False)
+        #plt.plot(s);
+        plt.plot(s[:10])
+        plt.show()
+        plt.plot(Vh[:10])
+        plt.show()
+        topics = self.__get_topics(Vh[:10], vocab)
+        print("Topics ", topics)
+        
+
+    def __get_topics(self, vector, vocab):
+        num_top_words=10
+        top_words = lambda t: [vocab[i] for i in np.argsort(t)[:-num_top_words-1:-1]]
+        topic_words = ([top_words(t) for t in vector])
+        return [' '.join(t) for t in topic_words] 
         
     def __getPurpose(self, model, clean_text, sentenceNum):
         
