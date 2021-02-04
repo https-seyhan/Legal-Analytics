@@ -12,6 +12,7 @@ from spacy.lemmatizer import Lemmatizer
 from spacy.tokenizer import Tokenizer
 from spacy.lang.en import English
 from gensim.models import Word2Vec
+from sklearn import decomposition
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 #from sklearn.feature_extraction import stop_words
@@ -21,7 +22,7 @@ import operator
 import matplotlib.pyplot as plt
 import io
 import os
-os.chdir('/home/saul/Business')
+
     
 class Document:
     # Class attributes
@@ -35,17 +36,23 @@ class Document:
     
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
     os.chdir('/home/saul/Business')
-    
+
+    numberofTopics = 5
+    svdTopics = []
+    nmfTopics = []
+    ldaTopics = []
+    Topics = {}  
+    weightsDict = {}  
     
     def __init__(self, fileName):
-        print("constructor called")
-        print ("Class Attributes ", self.resource_manager, self.file_handle, self.converter)
+        #print("constructor called")
+        #print ("Class Attributes ", self.resource_manager, self.file_handle, self.converter)
         
         self.__convertToText(fileName)
         
     def __convertToText(self, fileName):
         list = []
-        print ("file Name ", fileName)
+        #print ("file Name ", fileName)
         with open(fileName, 'rb') as fh:
             for page in PDFPage.get_pages(fh, 
                                         caching=True,
@@ -66,7 +73,7 @@ class Document:
         customize_stop_words = ['a.', 'b.', 'c.', 'i.', 'ii', 'iii', 
         'the', 'to', " \x0c", ' ', 'Mr.', 'Dr.', 'v', 'of', 'case', 'section', 'defence',
         'trial', 'evidence', 'law', 'court', 'Court', 'criminal', 'Act', 'Article', 'UK','extradition', 'offence', 'information',
-        '“', '-v-', 'A.', 'B.', '(', ')', 'wlr'
+        '“', '-v-', 'A.', 'B.', '(', ')', 'wlr', 'wikileaks'
         ]
         for w in customize_stop_words:
             self.nlp.vocab[w].is_stop = True
@@ -90,8 +97,12 @@ class Document:
         #print(listToStr) # Print clean data
         cleanDoc = self.nlp(listToStr)
         #print(" Clean Doc ", cleanDoc)
-        #self.__tokenizeDoco(cleanDoc)
+        self.__tokenizeDoco(cleanDoc)
         self.__svdDecomp(cleanDoc)
+        self.__NMFDecomp(cleanDoc)
+        self.__LDADecomp(cleanDoc)
+        self.__topicAnalysis()
+        self.__plotTopics()
         # convert list ot nlp doc
         #cleanDoc = Doc(self.nlp.vocab, words=cleanDoc)
         # Tokens of the document
@@ -143,19 +154,20 @@ class Document:
         #model = tfidf_vector.fit_transform(sents_list)
         model = tfidf_vector.fit(sents_list)
         transformed_model = model.transform(sents_list)
-        print("Model Feature Names ", tfidf_vector.get_feature_names())
+        
+        #print("Model Feature Names ", tfidf_vector.get_feature_names())
         #print(tfidf_vector.vocabulary_)
         #print(tfidf_vector.idf_)
         #print("Model Start ")
         #print("Model ", model)
         
         #weight_dict = dict(zip(tfidf_vector.get_feature_names(), tfidf_vector.idf_))
-        weight_dict = dict(zip(model.get_feature_names(), tfidf_vector.idf_))
-        print("Weight Dict ", weight_dict)
+        self.weightsDict = dict(zip(model.get_feature_names(), tfidf_vector.idf_))
+        #print("Weight Dict ", self.weightsDict)
         #print(type(sents_list))
         
         #Weight of words per document
-        print( "Word weight per document ", transformed_model.toarray())
+        #print( "Word weight per document ", transformed_model.toarray())
         max_val = transformed_model.max(axis=0).toarray().ravel()
         
         sort_by_tfidf = max_val.argsort()
@@ -175,33 +187,129 @@ class Document:
     def __svdDecomp(self, doc):
     
         sents_list = []
-        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts
-
-        
+        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
         for sent in doc.sents:
             sents_list.append(sent.text)
-        
-        #print(bow_vector)
-        
+        #print(bow_vector) 
         vectors = bow_vector.fit_transform(sents_list).todense()
-        print (" Vectors ", vectors)
+        #print (" Vectors ", vectors)
         vocab = np.array(bow_vector.get_feature_names())
         U, s, Vh = linalg.svd(vectors, full_matrices=False)
         #plt.plot(s);
-        plt.plot(s[:10])
-        plt.show()
-        plt.plot(Vh[:10])
-        plt.show()
-        topics = self.__get_topics(Vh[:10], vocab)
-        print("Topics ", topics)
+        #plt.plot(s[:10])
+        #plt.show()
+        #plt.plot(Vh[:10])
+        #plt.show()
+        topics = self.__get_topics(Vh[:self.numberofTopics], vocab)
+        #print("Topics ", topics)
+        self.__tokenizeTopics(topics, "SVD")
         
+
+    def __NMFDecomp(self, doc):
+ 
+        sents_list = []
+        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
+        for sent in doc.sents:
+            sents_list.append(sent.text)
+        #print(bow_vector) 
+        vectors = bow_vector.fit_transform(sents_list).todense()
+        #print (" Vectors ", vectors)
+        vocab = np.array(bow_vector.get_feature_names())
+        m,n=vectors.shape
+        
+        topicModel = decomposition.NMF(n_components= self.numberofTopics, random_state=1)
+        fittedModel = topicModel.fit_transform(vectors)
+        topicModelComps = topicModel.components_
+        topics = self.__get_topics(topicModelComps, vocab)
+        #print("Topics ", topics)
+        self.__tokenizeTopics(topics, "NMF")
+
+    def __LDADecomp(self, doc):
+
+        sents_list = []
+        bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
+        for sent in doc.sents:
+            sents_list.append(sent.text)
+        #print(bow_vector) 
+        vectors = bow_vector.fit_transform(sents_list).todense()
+        #print (" Vectors ", vectors)
+        vocab = np.array(bow_vector.get_feature_names())
+        m,n=vectors.shape
+
+        topicModel = decomposition.LatentDirichletAllocation(n_components=self.numberofTopics, max_iter=10, learning_method='online',verbose=True)
+        #data_lda = lda.fit_transform(data_vectorized)
+        lda_fit = topicModel.fit_transform(vectors)
+        topicModelComps = topicModel.components_
+        #print(topicModelComps)
+        
+        topics = self.__get_topics(topicModelComps, vocab)
+        #print("Topics ", topics)
+        #self.__topTopics(topicModel, bow_vector)
+        self.__tokenizeTopics(topics, "LDA")
+
+    def __tokenizeTopics(self, topics, modeltype):
+
+        # convert List to String not include strings less then 3
+        listToStr = ' '.join([str(elem) for elem in topics if len(elem) > 2]) 
+        #print(listToStr) # Print clean data
+        
+        doc = self.nlp(listToStr)
+
+        #print("Doc ", doc)   
+        for sent in doc:
+            if modeltype == "LDA":
+                self.ldaTopics.append(sent.text)
+            elif modeltype == "NMF":
+                self.nmfTopics.append(sent.text)
+            elif modeltype == "SVD":
+                self.svdTopics.append(sent.text)
+
+        #print("Word List ", self.svdTopics)
+
+    def __topicAnalysis(self):
+
+        print("Topics via LDA ", self.ldaTopics)
+
+        self.Topics = set(self.ldaTopics) & set(self.nmfTopics) & set(self.svdTopics)
+        print("Values ", self.Topics)
+
+    def __plotTopics(self):
+
+        #print("Topics ", self.Topics)
+        #print("Word Weights ", self.weightsDict)
+        mainTopics = {}
+
+        for key in self.Topics:
+            #for key1 in self.weightsDict:
+
+            if key in self.weightsDict:
+                print(key, self.weightsDict[key])
+                mainTopics[key] = self.weightsDict[key]
+
+        
+        tt = dict(reversed(sorted(mainTopics.items(), key=lambda item: item[1]))) # sort topics with their idf
+
+        x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
+
+        plt.plot(x, y)
+        plt.show()
+        plt.bar(x,y)
+        plt.show()
+
+
+    def __topTopics(self, model, vectorizer, top_n = 5):
+        for idx, topic in enumerate(model.components_):
+            print("Topic %d:" % (idx))
+            print([(vectorizer.get_feature_names()[i], topic[i])
+                        for i in topic.argsort()[:-top_n - 1:-1]]) 
 
     def __get_topics(self, vector, vocab):
         num_top_words=10
         top_words = lambda t: [vocab[i] for i in np.argsort(t)[:-num_top_words-1:-1]]
         topic_words = ([top_words(t) for t in vector])
         return [' '.join(t) for t in topic_words] 
-        
+     
+
     def __getPurpose(self, model, clean_text, sentenceNum):
         
         #print("Model Values ", model[0])
