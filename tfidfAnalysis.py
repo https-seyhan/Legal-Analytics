@@ -20,9 +20,12 @@ from scipy import linalg
 import numpy as np
 import operator
 import matplotlib.pyplot as plt
+import seaborn as sb
+import pandas as pd
 import io
 import os
-
+sb.set_theme(style="whitegrid")
+np.set_printoptions(precision=2)
     
 class Document:
     # Class attributes
@@ -43,6 +46,9 @@ class Document:
     ldaTopics = []
     Topics = {}  
     weightsDict = {}  
+
+    #fig, (ax1, ax2, ax3) = plt.subplot(nrows=1, ncols=3, polar=True)
+    
     
     def __init__(self, fileName):
         #print("constructor called")
@@ -116,13 +122,13 @@ class Document:
         others = [t.lemma_ for t in cleanDoc if t.pos_ != "VERB" and t.pos_ != "NOUN" and t.pos_ != "ADJ" and t.pos_ != "NUM" 
         and t.pos != "-PRON-"]
         #print("Nouns ", nouns)
-        #self.__verbAnalysis(verbs)
-        #self.__nounAnalysis(nouns)
+        self.__verbAnalysis(verbs)
+        self.__nounAnalysis(nouns)
         #self.__lemmatizerDoco(nouns)
         #self.__lemmatizerDoco(verbs)
         #self.__lemmatizerDoco(adjectives)
         #self.__lemmatizerDoco(others)
-        #self.__adjectiveAnalysis(adjectives)
+        self.__adjectiveAnalysis(adjectives)
         #self.__otherAnalysis(others)
         #self.__verbSimilarity(verbs)
         
@@ -287,13 +293,26 @@ class Document:
                 mainTopics[key] = self.weightsDict[key]
 
         
+
         tt = dict(reversed(sorted(mainTopics.items(), key=lambda item: item[1]))) # sort topics with their idf
 
         x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
 
-        plt.plot(x, y)
-        plt.show()
-        plt.bar(x,y)
+        df = pd.DataFrame({"topic":x, 
+                          "rank":y})
+        print(df.head(5))
+
+        g = sb.PairGrid(df, x_vars= ["rank"] , y_vars=["topic"],
+                        height=10, aspect= 0.8)
+        print(" X ", x)
+
+        g.map(sb.stripplot, size=12, orient="h", jitter=False,
+              palette="flare_r", linewidth=1, edgecolor="w")
+
+        plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.99)
+        #plt.plot(x, y)
+        #plt.show()
+        #plt.bar(x,y)
         plt.show()
 
 
@@ -355,6 +374,120 @@ class Document:
         lemm_freq = Counter(lemm_)
         common_lemm = lemm_freq.most_common(10)
         print("Common Lemmaz ", common_lemm)
+
+        # Get Bag of Words (BoW) of top 10 words
+    def __verbAnalysis(self, verbs):
+        verb_freq = Counter(verbs)
+        common_verbs = verb_freq.most_common(10)
+        print("Common Verbs ", common_verbs)
+        self.__radar(common_verbs)
+        self.__bar(common_verbs)
+
+        #self.__verbSimilarity(common_verbs, verbs)
+        #self.__converFiletoJSON(common_verbs)
+        
+    def __nounAnalysis(self, nouns):
+        noun_freq = Counter(nouns)
+        common_nouns = noun_freq.most_common(10)
+        print("Common Nouns ", common_nouns)
+        self.__radar(common_nouns)
+        self.__bar(common_nouns)
+
+
+        
+    def __adjectiveAnalysis(self, adjectives):
+        adj_freq = Counter(adjectives)
+        common_adjs = adj_freq.most_common(10)
+        print("Common Adjectives ", common_adjs)
+        self.__radar(common_adjs)
+        self.__bar(common_adjs)
+    
+    def __otherAnalysis(self, others):
+        oth_freq = Counter(others)
+        common_oths = oth_freq.most_common(10)
+        print("Common other ", common_oths)
+        
+    def __wordAnalysis(self, tokens, nouns, verbs, adjectives, docents):
+        #print(verbs)
+        # five most common tokens
+        verb_freq = Counter(verbs)
+        common_verbs = verb_freq.most_common(50)
+        print("Common Verbs ", common_verbs)
+        
+        noun_freq = Counter(nouns)
+        common_nouns = noun_freq.most_common(50)
+        print("Common Nouns ", common_nouns)
+        
+        token_freq = Counter(tokens)
+        common_tokens = token_freq.most_common(50)
+        print("Common Tokens ", common_tokens)
+        
+        adj_freq = Counter(adjectives)
+        common_adjs = adj_freq.most_common(50)
+        print("Common adjectives ", common_adjs)
+    
+    def __wordSimilarity(self, verbs, document):
+
+        for token1 in verbs:
+            for token2 in document:
+                if token1.similarity(token2) > 0.9:
+                    print(token1.text, token2.text, token1.similarity(token2))
+    
+    def __radar(self, words):
+        graphdata = {}
+        graphdata['group'] = ['A']
+        print('Radar')
+        print(len(words))
+        for _ in range(len(words)):
+            print(words[_][0])
+            graphdata[words[_][0]]= [words[_][1]]
+        
+        print (graphdata)
+        dataframe = pd.DataFrame(graphdata)
+        print(dataframe)
+        
+        categories=list(dataframe)[1:]
+        N = len(categories)
+        
+        values=dataframe.loc[0].drop('group').values.flatten().tolist()
+        values += values[:1]
+        print(values)
+        angles = [n / float(N) * 2 * pi for n in range(N)]
+        angles += angles[:1]
+        
+        ax = plt.subplot(111, polar=True)
+        plt.xticks(angles[:-1], categories, color='grey', size=8)
+        ax.set_rlabel_position(0)
+        plt.yticks([20, 60,  100, 140, 180], 
+        ["20", "60", "100", "140", "180"], color="grey", size=7)
+        plt.ylim(0,max(values))
+        ax.plot(angles, values, linewidth=1, linestyle='solid')
+        ax.fill(angles, values, 'b', alpha=0.1)
+        plt.show()
+
+    def __bar(self, words):
+        #fig = plt.figure()
+        #ax = fig.add_axes([0,0,1,1])
+        graphdata = {}
+        #graphdata['group'] = ['A']
+        print(len(words))
+        for _ in range(len(words)):
+            print(words[_][0])
+            graphdata[words[_][0]]= [words[_][1]]
+        
+        dataframe = pd.DataFrame(graphdata)
+        categories=list(dataframe)[0:]
+        values=dataframe.loc[0].values.flatten().tolist()
+        #print("Values ", values)
+        #values += values[:1]
+        #print("Values ", values)
+        y_pos = np.arange(len(categories))
+
+        plt.bar(categories,values, align='center', alpha=0.5, color=(0.1, 0.1, 0.1, 0.1))
+        plt.xticks(y_pos, categories,  rotation=90)
+        plt.subplots_adjust(bottom=0.3, top=0.99)
+        plt.show()
+        #ax = dataframe.plot.bar(x=values, y=categories, rot=0)
 
 if __name__ == '__main__':
     print("Turbo")
