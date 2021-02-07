@@ -44,6 +44,11 @@ class Document:
     svdTopics = []
     nmfTopics = []
     ldaTopics = []
+
+    common_verbs = []
+    common_nouns = []
+    common_adjs = []
+
     Topics = {}  
     weightsDict = {}  
 
@@ -51,8 +56,6 @@ class Document:
     
     
     def __init__(self, fileName):
-        #print("constructor called")
-        #print ("Class Attributes ", self.resource_manager, self.file_handle, self.converter)
         
         self.__convertToText(fileName)
         
@@ -179,16 +182,10 @@ class Document:
         sort_by_tfidf = max_val.argsort()
         
         feature_names = np.array(tfidf_vector.get_feature_names())
-        print("Features with lowest tfidf:\n{}".format(feature_names[sort_by_tfidf[:10]]))
+        #print("Features with lowest tfidf:\n{}".format(feature_names[sort_by_tfidf[:10]]))
 
-        print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
+        #print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
 
-        
-        sentenceCount = 0
-        #print(vec.get_feature_names())
-        while len(sents_list) > sentenceCount:
-            #self.__getPurpose(model, sents_list[sentenceCount], sentenceCount)
-            sentenceCount += 1
     
     def __svdDecomp(self, doc):
     
@@ -249,8 +246,7 @@ class Document:
         #print(topicModelComps)
         
         topics = self.__get_topics(topicModelComps, vocab)
-        #print("Topics ", topics)
-        #self.__topTopics(topicModel, bow_vector)
+
         self.__tokenizeTopics(topics, "LDA")
 
     def __tokenizeTopics(self, topics, modeltype):
@@ -260,62 +256,18 @@ class Document:
         #print(listToStr) # Print clean data
         
         doc = self.nlp(listToStr)
-
-        #print("Doc ", doc)   
+ 
         for sent in doc:
             if modeltype == "LDA":
                 self.ldaTopics.append(sent.text)
             elif modeltype == "NMF":
                 self.nmfTopics.append(sent.text)
             elif modeltype == "SVD":
-                self.svdTopics.append(sent.text)
-
-        #print("Word List ", self.svdTopics)
+                self.svdTopics.append(sent.text)        
 
     def __topicAnalysis(self):
-
-        print("Topics via LDA ", self.ldaTopics)
-
         self.Topics = set(self.ldaTopics) & set(self.nmfTopics) & set(self.svdTopics)
-        print("Values ", self.Topics)
-
-    def __plotTopics(self):
-
-        #print("Topics ", self.Topics)
-        #print("Word Weights ", self.weightsDict)
-        mainTopics = {}
-
-        for key in self.Topics:
-            #for key1 in self.weightsDict:
-
-            if key in self.weightsDict:
-                print(key, self.weightsDict[key])
-                mainTopics[key] = self.weightsDict[key]
-
         
-
-        tt = dict(reversed(sorted(mainTopics.items(), key=lambda item: item[1]))) # sort topics with their idf
-
-        x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
-
-        df = pd.DataFrame({"topic":x, 
-                          "rank":y})
-        print(df.head(5))
-
-        g = sb.PairGrid(df, x_vars= ["rank"] , y_vars=["topic"],
-                        height=10, aspect= 0.8)
-        print(" X ", x)
-
-        g.map(sb.stripplot, size=12, orient="h", jitter=False,
-              palette="flare_r", linewidth=1, edgecolor="w")
-
-        plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.99)
-        #plt.plot(x, y)
-        #plt.show()
-        #plt.bar(x,y)
-        plt.show()
-
-
     def __topTopics(self, model, vectorizer, top_n = 5):
         for idx, topic in enumerate(model.components_):
             print("Topic %d:" % (idx))
@@ -330,9 +282,7 @@ class Document:
      
 
     def __getPurpose(self, model, clean_text, sentenceNum):
-        
-        #print("Model Values ", model[0])
-        print("Sentence Num ", sentenceNum)
+                
         # get weights of words
         wordweights = model[sentenceNum].data
         
@@ -340,25 +290,14 @@ class Document:
         words = clean_text.split(" ")
         #remove duplicates in list
         words = list(dict.fromkeys(words))
-        print("Words ", words)
-        print("Weights ", wordweights, '\n')
+
         sentencepurpose = {}
         word = 0
         print("Sentence Size ", len(words), '\n')
         print("Weight Size ", len(wordweights), '\n')
         #get tfidf vectors and insert into a dictionary
         while len(words) > word:
-            #print("Len ", len(words))
-            #print("word ", word)
-            #print("Word Size ", len(words) )
-            
-            #print(words[word])
-            #print(wordweights[word])
-            #print("Key ", words[word])
-            #print("Weight ", wordweights[word])
-            sentencepurpose[words[word]] = wordweights[word]
-            #print("Sentence ", sentencepurpose[words[word]])
-            
+            sentencepurpose[words[word]] = wordweights[word]          
             word += 1
         print("END!!!!!!!!")
 
@@ -378,37 +317,30 @@ class Document:
         # Get Bag of Words (BoW) of top 10 words
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
-        common_verbs = verb_freq.most_common(10)
-        print("Common Verbs ", common_verbs)
-        self.__radar(common_verbs)
-        self.__bar(common_verbs)
+        self.common_verbs = verb_freq.most_common(10)
+        self.__radar(self.common_verbs, 'Top 10 Frequent Verbs')
+        self.__bar(self.common_verbs, 'Top 10 Frequent Verbs')
 
-        #self.__verbSimilarity(common_verbs, verbs)
-        #self.__converFiletoJSON(common_verbs)
-        
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
-        common_nouns = noun_freq.most_common(10)
-        print("Common Nouns ", common_nouns)
-        self.__radar(common_nouns)
-        self.__bar(common_nouns)
-
-
+        self.common_nouns = noun_freq.most_common(10)       
+        self.__radar(self.common_nouns, 'Top 10 Frequent Nouns')
+        self.__bar(self.common_nouns, 'Top 10 Frequent Nouns')
         
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
-        common_adjs = adj_freq.most_common(10)
-        print("Common Adjectives ", common_adjs)
-        self.__radar(common_adjs)
-        self.__bar(common_adjs)
+        self.common_adjs = adj_freq.most_common(10)
+        
+        self.__radar(self.common_adjs, 'Top 10 Frequent Adjectives')
+        self.__bar(self.common_adjs, 'Top 10 Frequent Nouns')
     
     def __otherAnalysis(self, others):
         oth_freq = Counter(others)
         common_oths = oth_freq.most_common(10)
-        print("Common other ", common_oths)
+        #print("Common other ", common_oths)
         
     def __wordAnalysis(self, tokens, nouns, verbs, adjectives, docents):
-        #print(verbs)
+        
         # five most common tokens
         verb_freq = Counter(verbs)
         common_verbs = verb_freq.most_common(50)
@@ -427,68 +359,99 @@ class Document:
         print("Common adjectives ", common_adjs)
     
     def __wordSimilarity(self, verbs, document):
-
         for token1 in verbs:
             for token2 in document:
                 if token1.similarity(token2) > 0.9:
                     print(token1.text, token2.text, token1.similarity(token2))
     
-    def __radar(self, words):
+    def __plotTopics(self):
+
+        mainTopics = {}
+
+        for key in self.Topics:
+            #for key1 in self.weightsDict:
+
+            if key in self.weightsDict:
+                #print(key, self.weightsDict[key])
+                mainTopics[key] = self.weightsDict[key]
+
+        tt = dict(reversed(sorted(mainTopics.items(), key=lambda item: item[1]))) # sort topics with their idf
+
+        x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
+
+        df = pd.DataFrame({"topic":x, 
+                          "rank":y})
+
+        g = sb.PairGrid(df, x_vars= ["rank"] , y_vars=["topic"],
+                        height=10, aspect= 0.8)
+
+        g.map(sb.stripplot, size=12, orient="h", jitter=False,
+              palette="flare_r", linewidth=1, edgecolor="w")
+
+        plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.99)
+        plt.show()
+
+    def __radar(self, words, title):
+
+        fig, axes = plt.subplots(figsize=(9, 9))
+        fig.subplots_adjust(wspace=0.25, hspace=0.20, top=0.85, bottom=0.05)
+        
         graphdata = {}
         graphdata['group'] = ['A']
-        print('Radar')
-        print(len(words))
+                
         for _ in range(len(words)):
-            print(words[_][0])
+            #print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
-        
-        print (graphdata)
+                
         dataframe = pd.DataFrame(graphdata)
-        print(dataframe)
-        
+           
         categories=list(dataframe)[1:]
         N = len(categories)
         
         values=dataframe.loc[0].drop('group').values.flatten().tolist()
         values += values[:1]
-        print(values)
+        
         angles = [n / float(N) * 2 * pi for n in range(N)]
         angles += angles[:1]
         
         ax = plt.subplot(111, polar=True)
-        plt.xticks(angles[:-1], categories, color='grey', size=8)
+        plt.xticks(angles[:-1], categories, color='grey', size=10)
         ax.set_rlabel_position(0)
         plt.yticks([20, 60,  100, 140, 180], 
-        ["20", "60", "100", "140", "180"], color="grey", size=7)
+        ["20", "60", "100", "140", "180"], color="grey", size=8)
         plt.ylim(0,max(values))
         ax.plot(angles, values, linewidth=1, linestyle='solid')
         ax.fill(angles, values, 'b', alpha=0.1)
+        ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1),
+                     horizontalalignment='center', verticalalignment='center')
         plt.show()
 
-    def __bar(self, words):
-        #fig = plt.figure()
-        #ax = fig.add_axes([0,0,1,1])
+    def __bar(self, words, title):
+
+        figs = plt.subplots(figsize=(9, 9))
+ 
         graphdata = {}
-        #graphdata['group'] = ['A']
-        print(len(words))
+        
         for _ in range(len(words)):
-            print(words[_][0])
+            #print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
         
         dataframe = pd.DataFrame(graphdata)
         categories=list(dataframe)[0:]
         values=dataframe.loc[0].values.flatten().tolist()
-        #print("Values ", values)
-        #values += values[:1]
-        #print("Values ", values)
+
+        plt.subplots_adjust(bottom=0.3, top=0.99)
         y_pos = np.arange(len(categories))
+        ax = plt.subplot(111)
 
         plt.bar(categories,values, align='center', alpha=0.5, color=(0.1, 0.1, 0.1, 0.1))
-        plt.xticks(y_pos, categories,  rotation=90)
-        plt.subplots_adjust(bottom=0.3, top=0.99)
+        plt.xticks(y_pos, categories,  rotation=90)        
+        
+        ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1),
+                     horizontalalignment='center', verticalalignment='center')
+        
         plt.show()
-        #ax = dataframe.plot.bar(x=values, y=categories, rot=0)
 
 if __name__ == '__main__':
-    print("Turbo")
+    
     courtdoco = Document("usaassangejudgement.pdf")
