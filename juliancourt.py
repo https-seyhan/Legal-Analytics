@@ -136,7 +136,7 @@ class Document:
         graphdata = {}
         graphdata['group'] = ['A']
         print('Radar')
-        print(len(words))
+       
         for _ in range(len(words)):
             print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
