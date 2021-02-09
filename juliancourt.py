@@ -49,8 +49,7 @@ class Document:
             list.append(text)
         #list.to_csv('pdftotext.csv')
         self.converter.close()
-        self.file_handle.close()
-        
+        self.file_handle.close()       
         self.__courtAnalysis(text)
                
     def __courtAnalysis(self, text):
