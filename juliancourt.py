@@ -141,7 +141,7 @@ class Document:
             print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
         
-        print (graphdata)
+        
         dataframe = pd.DataFrame(graphdata)
         print(dataframe)     
         categories=list(dataframe)[1:]
