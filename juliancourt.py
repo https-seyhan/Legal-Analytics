@@ -113,7 +113,7 @@ class Document:
     def __lemmatizerDoco(self, text):
         lemmatizer = self.nlp.Defaults.create_lemmatizer()
         lemm_ = [lemmatizer.lookup(word) for word in text]
-        #print("LEMMA ", lemm_)       
+          
         lemm_freq = Counter(lemm_)
         common_lemm = lemm_freq.most_common(10)
         print("Common Lemmaz ", common_lemm)
