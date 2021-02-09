@@ -162,17 +162,12 @@ class Document:
         #print(tfidf_vector)
         #model = tfidf_vector.fit_transform(sents_list)
         model = tfidf_vector.fit(sents_list)
-        transformed_model = model.transform(sents_list)
+        transformed_model = model.transform(sents_list) #Transform documents to document-term matrix.
         
-        #print("Model Feature Names ", tfidf_vector.get_feature_names())
-        #print(tfidf_vector.vocabulary_)
-        #print(tfidf_vector.idf_)
-        #print("Model Start ")
-        #print("Model ", model)
         
         #weight_dict = dict(zip(tfidf_vector.get_feature_names(), tfidf_vector.idf_))
         self.weightsDict = dict(zip(model.get_feature_names(), tfidf_vector.idf_))
-        #print("Weight Dict ", self.weightsDict)
+        print("Weight Dict ", self.weightsDict)
         #print(type(sents_list))
         
         #Weight of words per document
@@ -184,7 +179,7 @@ class Document:
         feature_names = np.array(tfidf_vector.get_feature_names())
         #print("Features with lowest tfidf:\n{}".format(feature_names[sort_by_tfidf[:10]]))
 
-        #print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
+        print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
 
     
     def __svdDecomp(self, doc):
@@ -235,13 +230,13 @@ class Document:
             sents_list.append(sent.text)
         #print(bow_vector) 
         vectors = bow_vector.fit_transform(sents_list).todense()
-        #print (" Vectors ", vectors)
+        
         vocab = np.array(bow_vector.get_feature_names())
         m,n=vectors.shape
 
         topicModel = decomposition.LatentDirichletAllocation(n_components=self.numberofTopics, max_iter=10, learning_method='online',verbose=True)
         #data_lda = lda.fit_transform(data_vectorized)
-        lda_fit = topicModel.fit_transform(vectors)
+        lda_fit = topicModel.fit_transform(vectors) #Learn the vocabulary dictionary and return document-term matrix
         topicModelComps = topicModel.components_
         #print(topicModelComps)
         
@@ -319,20 +314,20 @@ class Document:
         verb_freq = Counter(verbs)
         self.common_verbs = verb_freq.most_common(10)
         self.__radar(self.common_verbs, 'Top 10 Frequent Verbs')
-        self.__bar(self.common_verbs, 'Top 10 Frequent Verbs')
+        self.__bar(self.common_verbs, 'Top 10 Frequent Verbs', 'Verbs')
 
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
         self.common_nouns = noun_freq.most_common(10)       
-        self.__radar(self.common_nouns, 'Top 10 Frequent Nouns')
-        self.__bar(self.common_nouns, 'Top 10 Frequent Nouns')
+        self.__radar(self.common_nouns, 'Top 10 Frequent Subjects')
+        self.__bar(self.common_nouns, 'Top 10 Frequent Subjects', 'Nouns')
         
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
         self.common_adjs = adj_freq.most_common(10)
         
-        self.__radar(self.common_adjs, 'Top 10 Frequent Adjectives')
-        self.__bar(self.common_adjs, 'Top 10 Frequent Nouns')
+        self.__radar(self.common_adjs, 'Top 10 Frequent Referrals')
+        self.__bar(self.common_adjs, 'Top 10 Frequent Referrals', 'Adjectives' )
     
     def __otherAnalysis(self, others):
         oth_freq = Counter(others)
@@ -375,7 +370,7 @@ class Document:
                 #print(key, self.weightsDict[key])
                 mainTopics[key] = self.weightsDict[key]
 
-        tt = dict(reversed(sorted(mainTopics.items(), key=lambda item: item[1]))) # sort topics with their idf
+        tt = dict(sorted(mainTopics.items(), key=lambda item: item[1])) # sort topics with their idf
 
         x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
 
@@ -426,7 +421,7 @@ class Document:
                      horizontalalignment='center', verticalalignment='center')
         plt.show()
 
-    def __bar(self, words, title):
+    def __bar(self, words, title, subject):
 
         figs = plt.subplots(figsize=(9, 9))
  
@@ -440,7 +435,7 @@ class Document:
         categories=list(dataframe)[0:]
         values=dataframe.loc[0].values.flatten().tolist()
 
-        plt.subplots_adjust(bottom=0.3, top=0.99)
+        
         y_pos = np.arange(len(categories))
         ax = plt.subplot(111)
 
@@ -449,7 +444,9 @@ class Document:
         
         ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1),
                      horizontalalignment='center', verticalalignment='center')
-        
+        ax.set_ylabel("Term Frequency", fontweight ='bold')
+        ax.set_xlabel(subject, fontweight ='bold')
+        plt.subplots_adjust(bottom=0.2, top=0.9)
         plt.show()
 
 if __name__ == '__main__':
