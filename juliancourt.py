@@ -144,8 +144,7 @@ class Document:
         
         print (graphdata)
         dataframe = pd.DataFrame(graphdata)
-        print(dataframe)
-        
+        print(dataframe)     
         categories=list(dataframe)[1:]
         N = len(categories)     
         values=dataframe.loc[0].drop('group').values.flatten().tolist()
