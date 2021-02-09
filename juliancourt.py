@@ -43,8 +43,7 @@ class Document:
             for page in PDFPage.get_pages(fh, 
                                         caching=True,
                                         check_extractable=True):
-                self.page_interpreter.process_page(page)
-            
+                self.page_interpreter.process_page(page)           
             text = self.file_handle.getvalue() # whole document in text
             list.append(text)
         #list.to_csv('pdftotext.csv')
