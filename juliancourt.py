@@ -147,8 +147,7 @@ class Document:
         print(dataframe)
         
         categories=list(dataframe)[1:]
-        N = len(categories)
-        
+        N = len(categories)     
         values=dataframe.loc[0].drop('group').values.flatten().tolist()
         values += values[:1]
         print(values)
