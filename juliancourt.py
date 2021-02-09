@@ -22,7 +22,7 @@ from spacy.lemmatizer import Lemmatizer
 #import QML_application.py
 
 class Document:
-    # Class attributes
+    # Document Class Attributes
     resource_manager = PDFResourceManager()
     file_handle = io.StringIO()
     converter = TextConverter(resource_manager, file_handle)
