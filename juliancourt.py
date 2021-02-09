@@ -50,7 +50,7 @@ class Document:
         #list.to_csv('pdftotext.csv')
         self.converter.close()
         self.file_handle.close()
-        #print(text)
+        
         self.__courtAnalysis(text)
                
     def __courtAnalysis(self, text):
