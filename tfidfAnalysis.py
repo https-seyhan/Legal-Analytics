@@ -20,12 +20,14 @@ from scipy import linalg
 import numpy as np
 import operator
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import seaborn as sb
 import pandas as pd
 import io
 import os
 sb.set_theme(style="whitegrid")
-np.set_printoptions(precision=2)
+np.set_printoptions(precision=1)
+import warnings; warnings.filterwarnings(action='once')
     
 class Document:
     # Class attributes
@@ -55,8 +57,7 @@ class Document:
     #fig, (ax1, ax2, ax3) = plt.subplot(nrows=1, ncols=3, polar=True)
     
     
-    def __init__(self, fileName):
-        
+    def __init__(self, fileName):   
         self.__convertToText(fileName)
         
     def __convertToText(self, fileName):
@@ -179,7 +180,7 @@ class Document:
         feature_names = np.array(tfidf_vector.get_feature_names())
         #print("Features with lowest tfidf:\n{}".format(feature_names[sort_by_tfidf[:10]]))
 
-        print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
+        #print("\nFeatures with highest tfidf: \n{}".format(feature_names[sort_by_tfidf[-10:]]))
 
     
     def __svdDecomp(self, doc):
@@ -193,11 +194,7 @@ class Document:
         #print (" Vectors ", vectors)
         vocab = np.array(bow_vector.get_feature_names())
         U, s, Vh = linalg.svd(vectors, full_matrices=False)
-        #plt.plot(s);
-        #plt.plot(s[:10])
-        #plt.show()
-        #plt.plot(Vh[:10])
-        #plt.show()
+
         topics = self.__get_topics(Vh[:self.numberofTopics], vocab)
         #print("Topics ", topics)
         self.__tokenizeTopics(topics, "SVD")
@@ -228,17 +225,17 @@ class Document:
         bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
         for sent in doc.sents:
             sents_list.append(sent.text)
-        #print(bow_vector) 
+        
         vectors = bow_vector.fit_transform(sents_list).todense()
         
         vocab = np.array(bow_vector.get_feature_names())
         m,n=vectors.shape
 
         topicModel = decomposition.LatentDirichletAllocation(n_components=self.numberofTopics, max_iter=10, learning_method='online',verbose=True)
-        #data_lda = lda.fit_transform(data_vectorized)
+        
         lda_fit = topicModel.fit_transform(vectors) #Learn the vocabulary dictionary and return document-term matrix
         topicModelComps = topicModel.components_
-        #print(topicModelComps)
+        
         
         topics = self.__get_topics(topicModelComps, vocab)
 
@@ -246,7 +243,7 @@ class Document:
 
     def __tokenizeTopics(self, topics, modeltype):
 
-        # convert List to String not include strings less then 3
+        # convert List to String not include strings less than 3
         listToStr = ' '.join([str(elem) for elem in topics if len(elem) > 2]) 
         #print(listToStr) # Print clean data
         
@@ -313,21 +310,21 @@ class Document:
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
         self.common_verbs = verb_freq.most_common(10)
-        self.__radar(self.common_verbs, 'Top 10 Frequent Verbs')
-        self.__bar(self.common_verbs, 'Top 10 Frequent Verbs', 'Verbs')
+        self.__radar(self.common_verbs, 'Top 10 Frequent Actions')
+        self.__bar(self.common_verbs, 'Top 10 Frequent Actions', 'Actions')
 
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
         self.common_nouns = noun_freq.most_common(10)       
         self.__radar(self.common_nouns, 'Top 10 Frequent Subjects')
-        self.__bar(self.common_nouns, 'Top 10 Frequent Subjects', 'Nouns')
+        self.__bar(self.common_nouns, 'Top 10 Frequent Subjects', 'Subjects')
         
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
         self.common_adjs = adj_freq.most_common(10)
         
         self.__radar(self.common_adjs, 'Top 10 Frequent Referrals')
-        self.__bar(self.common_adjs, 'Top 10 Frequent Referrals', 'Adjectives' )
+        self.__bar(self.common_adjs, 'Top 10 Frequent Referrals', 'Referrals' )
     
     def __otherAnalysis(self, others):
         oth_freq = Counter(others)
@@ -374,16 +371,31 @@ class Document:
 
         x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
 
-        df = pd.DataFrame({"topic":x, 
-                          "rank":y})
+        df = pd.DataFrame({"Topics":x, 
+                          "Inverse Term Frequency Ranks":y})
 
-        g = sb.PairGrid(df, x_vars= ["rank"] , y_vars=["topic"],
-                        height=10, aspect= 0.8)
+        graph = sb.PairGrid(df, x_vars= ["Inverse Term Frequency Ranks"] , y_vars=["Topics"],
+                          height=10, aspect= 0.8)
 
-        g.map(sb.stripplot, size=12, orient="h", jitter=False,
+        graph.map(sb.stripplot, size=12, orient="h", jitter=False,
               palette="flare_r", linewidth=1, edgecolor="w")
 
-        plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.99)
+
+        # Annotate
+        plt.annotate('Mercedes Models', xy=(0.0, 11.0), xytext=(1.0, 11), xycoords='data', 
+            fontsize=15, ha='center', va='center',
+            bbox=dict(boxstyle='square', fc='firebrick'),
+            arrowprops=dict(arrowstyle='-[, widthB=2.0, lengthB=1.5', lw=2.0, color='steelblue'), color='white')
+        
+        # Add Patches
+        p1 = patches.Rectangle((3.7, 1.5), width=0.55, height=5, alpha=.2, facecolor='blue')
+        p2 = patches.Rectangle((4.6, 10.5), width=.2, height=3, alpha=.2, facecolor='red')
+        
+        plt.gca().add_patch(p1)
+        plt.gca().add_patch(p2)
+        print("P1 ", p1)
+        plt.title('Topics of Court Decision', weight='bold', fontdict={'size':11})
+        plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.9)
         plt.show()
 
     def __radar(self, words, title):
@@ -423,7 +435,7 @@ class Document:
 
     def __bar(self, words, title, subject):
 
-        figs = plt.subplots(figsize=(9, 9))
+        figs, ax = plt.subplots(figsize=(11, 7))
  
         graphdata = {}
         
@@ -437,15 +449,30 @@ class Document:
 
         
         y_pos = np.arange(len(categories))
-        ax = plt.subplot(111)
 
-        plt.bar(categories,values, align='center', alpha=0.5, color=(0.1, 0.1, 0.1, 0.1))
-        plt.xticks(y_pos, categories,  rotation=90)        
+        plt.barh(categories, values )
         
+        #plt.yticks(y_pos, categories) 
+        # Show top values  
+        ax.invert_yaxis() 
         ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1),
                      horizontalalignment='center', verticalalignment='center')
-        ax.set_ylabel("Term Frequency", fontweight ='bold')
-        ax.set_xlabel(subject, fontweight ='bold')
+        ax.set_ylabel( subject, fontweight ='bold')
+        ax.set_xlabel("Term Frequency", fontweight ='bold')
+        # Add Text watermark 
+        # Add padding between axes and labels 
+        ax.xaxis.set_tick_params(pad = 5) 
+        ax.yaxis.set_tick_params(pad = 10)
+        # Add annotation to bars 
+        for i in ax.patches: 
+            plt.text(i.get_width()+0.2, i.get_y()+0.5,  
+             str(round((i.get_width()), 2)), 
+             fontsize = 10, fontweight ='bold', 
+             color ='grey')
+
+        figs.text(0.9, 0.15, 'Seyhan AI', fontsize = 12, 
+         color ='grey', ha ='right', va ='bottom', 
+         alpha = 0.7) 
         plt.subplots_adjust(bottom=0.2, top=0.9)
         plt.show()
 
