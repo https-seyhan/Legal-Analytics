@@ -11,7 +11,7 @@ import spacy
 from spacy.lemmatizer import Lemmatizer
 from spacy.tokenizer import Tokenizer
 from spacy.lang.en import English
-from gensim.models import Word2Vec
+
 from sklearn import decomposition
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -310,20 +310,20 @@ class Document:
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
         self.common_verbs = verb_freq.most_common(10)
-        self.__radar(self.common_verbs, 'Top 10 Frequent Actions')
+        self.__radar(self.common_verbs, 'Top 10 Frequent Actions', 'Actions')
         self.__bar(self.common_verbs, 'Top 10 Frequent Actions', 'Actions')
 
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
         self.common_nouns = noun_freq.most_common(10)       
-        self.__radar(self.common_nouns, 'Top 10 Frequent Subjects')
+        self.__radar(self.common_nouns, 'Top 10 Frequent Subjects', 'Subjects')
         self.__bar(self.common_nouns, 'Top 10 Frequent Subjects', 'Subjects')
         
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
         self.common_adjs = adj_freq.most_common(10)
         
-        self.__radar(self.common_adjs, 'Top 10 Frequent Referrals')
+        self.__radar(self.common_adjs, 'Top 10 Frequent Referrals', 'Referrals')
         self.__bar(self.common_adjs, 'Top 10 Frequent Referrals', 'Referrals' )
     
     def __otherAnalysis(self, others):
@@ -389,7 +389,7 @@ class Document:
         
         # Add Patches
         p1 = patches.Rectangle((3.7, 1.5), width=0.55, height=5, alpha=.2, facecolor='blue')
-        p2 = patches.Rectangle((4.6, 10.5), width=.2, height=3, alpha=.2, facecolor='red')
+        p2 = patches.Rectangle((4.6, 10.5), width=.3, height=2, alpha=.2, facecolor='blue')
         
         plt.gca().add_patch(p1)
         plt.gca().add_patch(p2)
@@ -398,7 +398,7 @@ class Document:
         plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.9)
         plt.show()
 
-    def __radar(self, words, title):
+    def __radar(self, words, title, subject):
 
         fig, axes = plt.subplots(figsize=(9, 9))
         fig.subplots_adjust(wspace=0.25, hspace=0.20, top=0.85, bottom=0.05)
@@ -431,6 +431,7 @@ class Document:
         ax.fill(angles, values, 'b', alpha=0.1)
         ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1),
                      horizontalalignment='center', verticalalignment='center')
+        plt.savefig(str(subject) + '_radar.png')
         plt.show()
 
     def __bar(self, words, title, subject):
@@ -474,7 +475,9 @@ class Document:
          color ='grey', ha ='right', va ='bottom', 
          alpha = 0.7) 
         plt.subplots_adjust(bottom=0.2, top=0.9)
+        plt.savefig(str(subject) + '.png')
         plt.show()
+
 
 if __name__ == '__main__':
     
