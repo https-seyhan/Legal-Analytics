@@ -243,11 +243,6 @@ class Document:
         graph.map(sb.stripplot, size=12, orient="h", jitter=False,
               palette="flare_r", linewidth=1, edgecolor="w")
 
-        # Annotate
-        plt.annotate('Mercedes Models', xy=(0.0, 11.0), xytext=(1.0, 11), xycoords='data', 
-            fontsize=15, ha='center', va='center',
-            bbox=dict(boxstyle='square', fc='firebrick'),
-            arrowprops=dict(arrowstyle='-[, widthB=2.0, lengthB=1.5', lw=2.0, color='steelblue'), color='white')
         
         # Add Patches
         p1 = patches.Rectangle((3.7, 1.5), width=0.55, height=5, alpha=.2, facecolor='blue')
