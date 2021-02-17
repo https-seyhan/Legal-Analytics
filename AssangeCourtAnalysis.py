@@ -26,6 +26,7 @@ import io
 import os
 sb.set_theme(style="whitegrid")
 np.set_printoptions(precision=1)
+
 import warnings; warnings.filterwarnings(action='once')
     
 class Document:
@@ -264,7 +265,8 @@ class Document:
                 
         for _ in range(len(words)):
             graphdata[words[_][0]]= [words[_][1]]
-                
+
+
         dataframe = pd.DataFrame(graphdata)
            
         categories=list(dataframe)[1:]
@@ -277,15 +279,22 @@ class Document:
         angles += angles[:1]
         
         ax = plt.subplot(111, polar=True)
-        plt.xticks(angles[:-1], categories, color='grey', size=10)
+        plt.xticks(angles[:-1], categories, color='grey', weight='bold', size=12)
         ax.set_rlabel_position(0)
         plt.yticks([20, 60,  100, 140, 180], 
         ["20", "60", "100", "140", "180"], color="grey", size=8)
+        
         plt.ylim(0,max(values))
+
+        
+        ax.xaxis.grid(True, color="r", linestyle='solid', linewidth=0.5)
+        ax.yaxis.grid(True, color="r", linestyle='solid', linewidth=0.5)
+ 
         ax.plot(angles, values, linewidth=1, linestyle='solid')
-        ax.fill(angles, values, 'b', alpha=0.1)
+        ax.fill(angles, values, 'r', alpha=0.7)
         ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1),
                      horizontalalignment='center', verticalalignment='center')
+        
         plt.savefig(str(subject) + '_radar.png')
         plt.show()
 
