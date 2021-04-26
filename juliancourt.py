@@ -82,7 +82,7 @@ class Document:
         #cleanDoc = Doc(self.nlp.vocab, words=cleanDoc)
         # Tokens of the document
         #tokens = [t.text for t in doc if t.is_stop != True and t.is_punct != True]
-        
+       
         #nouns = [t.lemma_ for t in doc if t.is_stop != True and t.is_punct != True and t.pos_ =="NOUN"]
         #verbs = [t.lemma_ for t in doc if t.is_stop != True and t.is_punct != True and t.pos_ =="VERB"]
         nouns = [t.lemma_ for t in cleanDoc if t.pos_ == "NOUN"]
