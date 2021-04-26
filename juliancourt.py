@@ -184,7 +184,7 @@ class Document:
         plt.xticks(y_pos, categories,  rotation=90)
         plt.subplots_adjust(bottom=0.3, top=0.99)
         plt.show()
-       
+      
        
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
