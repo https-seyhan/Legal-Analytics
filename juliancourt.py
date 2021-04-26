@@ -234,7 +234,7 @@ class Document:
         for value in verbs:
             print(value[0])
             toplistToStr.append(value[0])
-            
+           
         toplistToStr = ' '.join([str(elem) for elem in toplistToStr]) 
         topcleanVerbs = self.nlp(toplistToStr)
         print(topcleanVerbs)
