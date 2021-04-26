@@ -19,7 +19,7 @@ from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from spacy.lemmatizer import Lemmatizer
-#import QML_application.py
+
 
 class Document:
     # Document Class Attributes
