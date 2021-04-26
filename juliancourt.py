@@ -106,7 +106,7 @@ class Document:
         # Find named entities, phrases and concepts
         #for entity in doc.ents:
             #print(entity.text, entity.label_)
-    
+   
     def __lemmatizerDoco(self, text):
         lemmatizer = self.nlp.Defaults.create_lemmatizer()
         lemm_ = [lemmatizer.lookup(word) for word in text]       
