@@ -121,7 +121,7 @@ class Document:
         print("Common Verbs ", common_verbs)
         #self.__verbSimilarity(common_verbs, verbs)
         #self.__converFiletoJSON(common_verbs)
-        
+       
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
         common_nouns = noun_freq.most_common(10)
