@@ -185,7 +185,7 @@ class Document:
         plt.subplots_adjust(bottom=0.3, top=0.99)
         plt.show()
         
-        
+       
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
         common_adjs = adj_freq.most_common(10)
