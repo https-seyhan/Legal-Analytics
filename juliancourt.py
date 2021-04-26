@@ -197,7 +197,7 @@ class Document:
         print("Common other ", common_oths)
     
     def __converFiletoJSON(self, file):
-        
+       
         data = {}
         for value in file:
             print(value)
