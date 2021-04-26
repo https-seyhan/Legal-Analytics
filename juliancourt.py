@@ -34,7 +34,7 @@ class Document:
         print("constructor called")
         print ("Class Attributes ", self.resource_manager, self.file_handle, self.converter)
         self.__convertToText(fileName)
-
+        
     def __convertToText(self, fileName):
         list = []
         print ("file Name ", fileName)
