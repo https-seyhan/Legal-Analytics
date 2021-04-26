@@ -20,7 +20,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from spacy.lemmatizer import Lemmatizer
 
-
 class Document:
     # Document Class Attributes
     resource_manager = PDFResourceManager()
