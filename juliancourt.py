@@ -162,7 +162,7 @@ class Document:
         #fig = plt.figure()
         #ax = fig.add_axes([0,0,1,1])
         graphdata = {}
-       
+      
         print(len(words))
         for _ in range(len(words)):
             print(words[_][0])
