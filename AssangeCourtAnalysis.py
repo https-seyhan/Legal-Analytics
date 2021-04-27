@@ -157,7 +157,6 @@ class Document:
         
         vocab = np.array(bow_vector.get_feature_names())
         m,n=vectors.shape
-
         topicModel = decomposition.LatentDirichletAllocation(n_components=self.numberofTopics, max_iter=10, learning_method='online',verbose=True)       
         lda_fit = topicModel.fit_transform(vectors) #Learn the vocabulary dictionary and return document-term matrix
         topicModelComps = topicModel.components_            
