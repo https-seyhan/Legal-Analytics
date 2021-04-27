@@ -115,7 +115,7 @@ class Document:
         tfidf_vector = TfidfVectorizer(smooth_idf=False, sublinear_tf=False, norm=None, analyzer='word')
         model = tfidf_vector.fit(sents_list)
         transformed_model = model.transform(sents_list) #Transform documents to document-term matrix.
-      
+     
         self.weightsDict = dict(zip(model.get_feature_names(), tfidf_vector.idf_))
         #Weight of words per document
         max_val = transformed_model.max(axis=0).toarray().ravel()
