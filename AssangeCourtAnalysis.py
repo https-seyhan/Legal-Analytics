@@ -111,7 +111,6 @@ class Document:
         sents_list = []
         for sent in doc.sents:
             sents_list.append(sent.text)
-
         #tfidf_vector = TfidfVectorizer()
         tfidf_vector = TfidfVectorizer(smooth_idf=False, sublinear_tf=False, norm=None, analyzer='word')
 
