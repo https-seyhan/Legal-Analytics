@@ -66,7 +66,6 @@ class Document:
            
             text = self.file_handle.getvalue() # whole document in text
             list.append(text)
-
         self.converter.close()
         self.file_handle.close()
         self.__textAnalysis(text)
