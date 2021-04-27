@@ -30,7 +30,7 @@ sb.set_theme(style="whitegrid")
 np.set_printoptions(precision=1)
 
 
- 
+
 class Document:
     # Class attributes
     resource_manager = PDFResourceManager()
