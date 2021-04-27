@@ -148,7 +148,6 @@ class Document:
         self.__tokenizeTopics(topics, "NMF")
 
     def __LDADecomp(self, doc):
-
         sents_list = []
         bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
         for sent in doc.sents:
