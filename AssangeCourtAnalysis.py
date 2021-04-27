@@ -38,7 +38,7 @@ class Document:
     #nlp = spacy.load("en_core_web_sm")
     nlp = spacy.load("en_core_web_lg")
     tokenizer = Tokenizer(nlp.vocab)
-   
+  
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
     os.chdir('/home/saul/Business')
     numberofTopics = 5
