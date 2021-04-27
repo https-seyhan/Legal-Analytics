@@ -87,7 +87,7 @@ class Document:
         #remove stop wods 
         cleanDoc = [t.text for t in doc if t.is_stop != True and t.whitespace_ != True and t.text.isspace() != True and t.is_punct != True 
         and t.pos != "-PRON-"]
-    
+   
         # convert List to String not include strings less then 3
         listToStr = ' '.join([str(elem) for elem in cleanDoc if len(elem) > 2]) 
         cleanDoc = self.nlp(listToStr)
