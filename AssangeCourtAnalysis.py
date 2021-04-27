@@ -165,7 +165,6 @@ class Document:
         self.__tokenizeTopics(topics, "LDA")
 
     def __tokenizeTopics(self, topics, modeltype):
-
         # convert List to String not include strings less than 3
         listToStr = ' '.join([str(elem) for elem in topics if len(elem) > 2])      
         doc = self.nlp(listToStr)
