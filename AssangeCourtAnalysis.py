@@ -1,6 +1,14 @@
 from collections import Counter
 import pandas as pd
 from math import pi
+import numpy as np
+import operator
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import seaborn as sb
+import pandas as pd
+import io
+import os
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
