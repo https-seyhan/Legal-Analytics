@@ -8,6 +8,7 @@ import seaborn as sb
 import pandas as pd
 import io
 import os
+import spacy
 from math import pi
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
