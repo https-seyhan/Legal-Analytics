@@ -97,7 +97,6 @@ class Document:
         self.__LDADecomp(cleanDoc)
         self.__topicAnalysis()
         self.__plotTopics()
-
         nouns = [t.lemma_ for t in cleanDoc if t.pos_ == "NOUN"]
         verbs = [t.lemma_ for t in cleanDoc if t.pos_ =="VERB"]
         adjectives = [t.lemma_ for t in cleanDoc if t.pos_ == "ADJ"]
