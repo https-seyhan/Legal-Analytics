@@ -113,7 +113,6 @@ class Document:
             sents_list.append(sent.text)
         #tfidf_vector = TfidfVectorizer()
         tfidf_vector = TfidfVectorizer(smooth_idf=False, sublinear_tf=False, norm=None, analyzer='word')
-
         model = tfidf_vector.fit(sents_list)
         transformed_model = model.transform(sents_list) #Transform documents to document-term matrix.
         
