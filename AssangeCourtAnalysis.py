@@ -15,7 +15,7 @@ from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from spacy.matcher import PhraseMatcher, Matcher
 from spacy.tokens import Doc, Span, Token
-import spacy
+
 from spacy.lemmatizer import Lemmatizer
 from spacy.tokenizer import Tokenizer
 from spacy.lang.en import English
