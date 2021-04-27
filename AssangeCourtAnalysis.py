@@ -112,7 +112,6 @@ class Document:
         self.__adjectiveAnalysis(adjectives)
                
     def __tokenizeDoco(self, doc):
-
         sents_list = []
         for sent in doc.sents:
             sents_list.append(sent.text)
