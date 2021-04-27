@@ -152,7 +152,7 @@ class Document:
         bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
         for sent in doc.sents:
             sents_list.append(sent.text)
-        
+       
         vectors = bow_vector.fit_transform(sents_list).todense()
         
         vocab = np.array(bow_vector.get_feature_names())
