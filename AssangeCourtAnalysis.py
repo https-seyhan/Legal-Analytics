@@ -123,7 +123,7 @@ class Document:
         sort_by_tfidf = max_val.argsort()
         feature_names = np.array(tfidf_vector.get_feature_names())
 
-    
+   
     def __svdDecomp(self, doc):
         sents_list = []
         bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
