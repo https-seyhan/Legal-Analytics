@@ -28,7 +28,7 @@ from scipy import linalg
 sb.set_theme(style="whitegrid")
 np.set_printoptions(precision=1)
 
-import warnings; warnings.filterwarnings(action='once')
+
     
 class Document:
     # Class attributes
