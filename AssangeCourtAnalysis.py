@@ -63,7 +63,7 @@ class Document:
                                         caching=True,
                                         check_extractable=True):
                 self.page_interpreter.process_page(page)
-        
+       
             text = self.file_handle.getvalue() # whole document in text
             list.append(text)
         self.converter.close()
