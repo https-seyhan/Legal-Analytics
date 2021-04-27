@@ -16,14 +16,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 #from sklearn.feature_extraction import stop_words
 from scipy import linalg
-import numpy as np
-import operator
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import seaborn as sb
-import pandas as pd
-import io
-import os
+
 sb.set_theme(style="whitegrid")
 np.set_printoptions(precision=1)
 
