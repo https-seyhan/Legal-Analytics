@@ -77,7 +77,7 @@ class Document:
         ]
         for w in customize_stop_words:
             self.nlp.vocab[w].is_stop = True
-          
+         
         customize_non_punct = [
         'Ms.'
         ]
