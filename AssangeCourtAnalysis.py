@@ -212,7 +212,6 @@ class Document:
         x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
         df = pd.DataFrame({"Topics":x, 
                           "Inverse Term Frequency Ranks":y})
-
         graph = sb.PairGrid(df, x_vars= ["Inverse Term Frequency Ranks"] , y_vars=["Topics"],
                           height=10, aspect= 0.8)
 
