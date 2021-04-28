@@ -205,7 +205,6 @@ class Document:
     def __plotTopics(self):
         mainTopics = {}
         for key in self.Topics:       
-
             if key in self.weightsDict:            
                 mainTopics[key] = self.weightsDict[key]
 
