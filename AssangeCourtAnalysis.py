@@ -65,7 +65,7 @@ class Document:
         self.converter.close()
         self.file_handle.close()
         self.__textAnalysis(text)
-  
+ 
     def __textAnalysis(self, text):   
         # Add law jargon and terms to stop words
         customize_stop_words = ['a.', 'b.', 'c.', 'i.', 'ii', 'iii', 
