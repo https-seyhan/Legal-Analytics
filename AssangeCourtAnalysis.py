@@ -52,7 +52,7 @@ class Document:
     
     def __init__(self, fileName):   
         self.__convertToText(fileName)
- 
+
     def __convertToText(self, fileName):
         list = []
         with open(fileName, 'rb') as fh:
