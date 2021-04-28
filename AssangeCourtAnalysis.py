@@ -203,7 +203,6 @@ class Document:
         common_oths = oth_freq.most_common(10)
      
     def __plotTopics(self):
-
         mainTopics = {}
 
         for key in self.Topics:       
