@@ -152,7 +152,7 @@ class Document:
             sents_list.append(sent.text)
        
         vectors = bow_vector.fit_transform(sents_list).todense()
-  
+ 
         vocab = np.array(bow_vector.get_feature_names())
         m,n=vectors.shape
         topicModel = decomposition.LatentDirichletAllocation(n_components=self.numberofTopics, max_iter=10, learning_method='online',verbose=True)       
