@@ -210,7 +210,6 @@ class Document:
 
         tt = dict(sorted(mainTopics.items(), key=lambda item: item[1])) # sort topics with their idf
         x, y = zip(*tt.items()) # unpack a list of pairs into two tuples
-
         df = pd.DataFrame({"Topics":x, 
                           "Inverse Term Frequency Ranks":y})
 
