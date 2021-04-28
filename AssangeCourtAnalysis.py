@@ -214,7 +214,6 @@ class Document:
                           "Inverse Term Frequency Ranks":y})
         graph = sb.PairGrid(df, x_vars= ["Inverse Term Frequency Ranks"] , y_vars=["Topics"],
                           height=10, aspect= 0.8)
-
         graph.map(sb.stripplot, size=12, orient="h", jitter=False,
               palette="flare_r", linewidth=1, edgecolor="w")
 
