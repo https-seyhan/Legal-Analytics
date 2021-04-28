@@ -102,7 +102,7 @@ class Document:
         self.__verbAnalysis(verbs)
         self.__nounAnalysis(nouns)
         self.__adjectiveAnalysis(adjectives)
-            
+           
     def __tokenizeDoco(self, doc):
         sents_list = []
         for sent in doc.sents:
