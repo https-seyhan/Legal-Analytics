@@ -164,7 +164,7 @@ class Document:
         # convert List to String not include strings less than 3
         listToStr = ' '.join([str(elem) for elem in topics if len(elem) > 2])      
         doc = self.nlp(listToStr)
- 
+
         for sent in doc:
             if modeltype == "LDA":
                 self.ldaTopics.append(sent.text)
