@@ -46,7 +46,6 @@ class Document:
     common_verbs = []
     common_nouns = []
     common_adjs = []
-
     Topics = {}  
     weightsDict = {}  
     
