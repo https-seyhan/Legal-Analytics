@@ -188,7 +188,7 @@ class Document:
         self.common_nouns = noun_freq.most_common(10)       
         self.__radar(self.common_nouns, 'Top 10 Frequent Subjects', 'Subjects')
         self.__bar(self.common_nouns, 'Top 10 Frequent Subjects', 'Subjects')
-  
+ 
     def __adjectiveAnalysis(self, adjectives):
         adj_freq = Counter(adjectives)
         self.common_adjs = adj_freq.most_common(10)    
