@@ -198,7 +198,7 @@ class Document:
     def __otherAnalysis(self, others):
         oth_freq = Counter(others)
         common_oths = oth_freq.most_common(10)
-     
+    
     def __plotTopics(self):
         mainTopics = {}
         for key in self.Topics:       
