@@ -46,7 +46,7 @@ class Document:
     common_verbs = []
     common_nouns = []
     common_adjs = []
-    Topics = {} 
+    Topics = {}
     weightsDict = {}
   
     def __init__(self, fileName):   
