@@ -127,7 +127,7 @@ class Document:
         topics = self.__get_topics(Vh[:self.numberofTopics], vocab)
         self.__tokenizeTopics(topics, "SVD")
 
-    def __NMFDecomp(self, doc): 
+    def __NMFDecomp(self, doc):
         sents_list = []
         bow_vector = CountVectorizer(min_df =0.001, max_df=0.95, stop_words='english') # Convert a collection of text documents to a matrix of token counts        
         for sent in doc.sents:
