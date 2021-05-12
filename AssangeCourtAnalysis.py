@@ -47,7 +47,7 @@ class Document:
     common_nouns = []
     common_adjs = []
     Topics = {}  
-    weightsDict = {}  
+    weightsDict = {} 
   
     def __init__(self, fileName):   
         self.__convertToText(fileName)
