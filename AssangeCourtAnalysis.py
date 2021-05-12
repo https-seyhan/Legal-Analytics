@@ -194,7 +194,7 @@ class Document:
         self.common_adjs = adj_freq.most_common(10)    
         self.__radar(self.common_adjs, 'Top 10 Frequent Referrals', 'Referrals')
         self.__bar(self.common_adjs, 'Top 10 Frequent Referrals', 'Referrals' )
-   
+  
     def __otherAnalysis(self, others):
         oth_freq = Counter(others)
         common_oths = oth_freq.most_common(10)
