@@ -48,7 +48,7 @@ class Document:
     common_adjs = []
     Topics = {}
     weightsDict = {}
-  
+ 
     def __init__(self, fileName):   
         self.__convertToText(fileName)
 
