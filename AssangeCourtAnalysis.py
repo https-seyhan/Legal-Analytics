@@ -215,7 +215,7 @@ class Document:
         graph.map(sb.stripplot, size=12, orient="h", jitter=False,
               palette="flare_r", linewidth=1, edgecolor="w")
 
-     
+    
         # Add Patches
         p1 = patches.Rectangle((3.7, 1.5), width=0.55, height=5, alpha=.2, facecolor='blue')
         p2 = patches.Rectangle((4.6, 10.5), width=.3, height=2, alpha=.2, facecolor='blue')
