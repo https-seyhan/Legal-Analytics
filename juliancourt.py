@@ -142,7 +142,7 @@ class Document:
         print(values)
         angles = [n / float(N) * 2 * pi for n in range(N)]
         angles += angles[:1]
-        
+       
         ax = plt.subplot(111, polar=True)
         plt.xticks(angles[:-1], categories, color='grey', size=8)
         ax.set_rlabel_position(0)
