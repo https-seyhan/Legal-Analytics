@@ -34,7 +34,7 @@ class Document:
         print("constructor called")
         print ("Class Attributes ", self.resource_manager, self.file_handle, self.converter)
         self.__convertToText(fileName)
-
+        
     def __convertToText(self, fileName):
         list = []
         print ("file Name ", fileName)
@@ -132,7 +132,7 @@ class Document:
         for _ in range(len(words)):
             print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
-            
+           
         dataframe = pd.DataFrame(graphdata)
         print(dataframe)     
         categories=list(dataframe)[1:]
