@@ -66,7 +66,7 @@ class Document:
         ]
         for w in customize_non_punct:
             self.nlp.vocab[w].is_punct = False
- 
+
         doc = self.nlp(text)
         #remove stop wods 
         cleanDoc = [t.text for t in doc if t.is_stop != True and t.whitespace_ != True and t.text.isspace() != True and t.is_punct != True]
