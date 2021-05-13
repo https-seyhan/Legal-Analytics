@@ -99,7 +99,7 @@ class Document:
         #print("Tokens", [t.text for t in cleanDoc],'\n')
         # Tags in the document 
         #print("Tags", [(t.text, t.tag_, t.pos_) for t in doc],'\n\n')
-        
+       
         # Analyze syntax
         #print("Noun phrases:", [chunk.text for chunk in doc.noun_chunks])
         #print("Verbs:", [t.lemma_ for t in doc if t.pos_ == "VERB"])
