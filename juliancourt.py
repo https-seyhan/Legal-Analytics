@@ -76,7 +76,6 @@ class Document:
         listToStr = ' '.join([str(elem) for elem in cleanDoc]) 
         #print(listToStr) # Print clean data
         cleanDoc = self.nlp(listToStr)
-
         # convert list ot nlp doc
         #cleanDoc = Doc(self.nlp.vocab, words=cleanDoc)
         # Tokens of the document
