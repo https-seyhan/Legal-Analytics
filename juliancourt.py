@@ -132,7 +132,7 @@ class Document:
         for _ in range(len(words)):
             print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
-           
+          
         dataframe = pd.DataFrame(graphdata)
         print(dataframe)     
         categories=list(dataframe)[1:]
