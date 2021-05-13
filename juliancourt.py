@@ -111,7 +111,7 @@ class Document:
         lemm_freq = Counter(lemm_)
         common_lemm = lemm_freq.most_common(10)
         print("Common Lemmaz ", common_lemm)
-   
+  
     # Get Bag of Words (BoW) of top 10 words
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
