@@ -88,7 +88,6 @@ class Document:
         verbs = [t.lemma_ for t in cleanDoc if t.pos_ =="VERB"]
         adjectives = [t.lemma_ for t in cleanDoc if t.pos_ == "ADJ"]
         others = [t.lemma_ for t in cleanDoc if t.pos_ != "VERB" and t.pos_ != "NOUN" and t.pos_ != "ADJ" and t.pos_ != "NUM"]
-
         self.__nounAnalysis(nouns)
         self.__lemmatizerDoco(nouns)
         #self.__adjectiveAnalysis(adjectives)
