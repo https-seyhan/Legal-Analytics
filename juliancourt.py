@@ -49,7 +49,7 @@ class Document:
         self.converter.close()
         self.file_handle.close()       
         self.__courtAnalysis(text)
-          
+         
     def __courtAnalysis(self, text):
         print(type(text))
         # Add law jargon and terms to stop words
