@@ -101,7 +101,7 @@ class Document:
         # Find named entities, phrases and concepts
         #for entity in doc.ents:
             #print(entity.text, entity.label_)
-
+            
     def __lemmatizerDoco(self, text):
         lemmatizer = self.nlp.Defaults.create_lemmatizer()
         lemm_ = [lemmatizer.lookup(word) for word in text]       
@@ -128,7 +128,7 @@ class Document:
         graphdata = {}
         graphdata['group'] = ['A']
         print('Radar')
- 
+
         for _ in range(len(words)):
             print(words[_][0])
             graphdata[words[_][0]]= [words[_][1]]
