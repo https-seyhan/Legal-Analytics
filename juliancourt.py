@@ -49,7 +49,7 @@ class Document:
         self.converter.close()
         self.file_handle.close()       
         self.__courtAnalysis(text)
-
+        
     def __courtAnalysis(self, text):
         print(type(text))
         # Add law jargon and terms to stop words
@@ -101,7 +101,7 @@ class Document:
         # Find named entities, phrases and concepts
         #for entity in doc.ents:
             #print(entity.text, entity.label_)
-            
+           
     def __lemmatizerDoco(self, text):
         lemmatizer = self.nlp.Defaults.create_lemmatizer()
         lemm_ = [lemmatizer.lookup(word) for word in text]       
