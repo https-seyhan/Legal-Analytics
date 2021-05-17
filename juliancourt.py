@@ -90,7 +90,6 @@ class Document:
         #self.__adjectiveAnalysis(adjectives)
         #self.__otherAnalysis(others)
         #self.__verbSimilarity(verbs)
-
         #self.__wordAnalysis(tokens, nouns, verbs, adjectives, cleanDoc.ents)
         #print("Tokens", [t.text for t in cleanDoc],'\n')
         # Tags in the document 
