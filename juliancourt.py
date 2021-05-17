@@ -29,7 +29,7 @@ class Document:
     #nlp = spacy.load("en_core_web_sm")
     nlp = spacy.load("en_core_web_lg")
     os.chdir('/home/saul/Business')
-   
+  
     def __init__(self, fileName):
         print("constructor called")
         print ("Class Attributes ", self.resource_manager, self.file_handle, self.converter)
