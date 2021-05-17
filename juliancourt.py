@@ -106,7 +106,7 @@ class Document:
         lemm_freq = Counter(lemm_)
         common_lemm = lemm_freq.most_common(10)
         print("Common Lemmaz ", common_lemm)
-
+        
     # Get Bag of Words (BoW) of top 10 words
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
@@ -138,7 +138,7 @@ class Document:
         print(values)
         angles = [n / float(N) * 2 * pi for n in range(N)]
         angles += angles[:1]
-  
+ 
         ax = plt.subplot(111, polar=True)
         plt.xticks(angles[:-1], categories, color='grey', size=8)
         ax.set_rlabel_position(0)
