@@ -108,7 +108,7 @@ class Document:
         lemm_freq = Counter(lemm_)
         common_lemm = lemm_freq.most_common(10)
         print("Common Lemmaz ", common_lemm)
-
+        
     # Get Bag of Words (BoW) of top 10 words
     def __verbAnalysis(self, verbs):
         verb_freq = Counter(verbs)
@@ -116,7 +116,7 @@ class Document:
         print("Common Verbs ", common_verbs)
         #self.__verbSimilarity(common_verbs, verbs)
         #self.__converFiletoJSON(common_verbs)
-       
+      
     def __nounAnalysis(self, nouns):
         noun_freq = Counter(nouns)
         common_nouns = noun_freq.most_common(10)
