@@ -181,7 +181,7 @@ class Document:
         adj_freq = Counter(adjectives)
         common_adjs = adj_freq.most_common(10)
         print("Common Adjectives ", common_adjs)
-    
+   
     def __otherAnalysis(self, others):
         oth_freq = Counter(others)
         common_oths = oth_freq.most_common(10)
