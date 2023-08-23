@@ -17,7 +17,7 @@ from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from spacy.matcher import PhraseMatcher, Matcher
 from spacy.tokens import Doc, Span, Token
-from spacy.lemmatizer import Lemmatizer
+#from spacy.lemmatizer import Lemmatizer
 from spacy.tokenizer import Tokenizer
 from spacy.lang.en import English
 from sklearn import decomposition
@@ -38,7 +38,7 @@ class Document:
     nlp = spacy.load("en_core_web_lg")
     tokenizer = Tokenizer(nlp.vocab)
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
-    lemmatizer = nlp.pipeline[5]  # lemmatizer
+    #lemmatizer = nlp.pipeline[5]  # lemmatizer
     os.chdir('/home/saul/Business')
     numberofTopics = 5
     svdTopics = []
