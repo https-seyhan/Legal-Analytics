@@ -224,7 +224,8 @@ class Document:
         plt.gca().add_patch(p2)
         plt.title('Topics of Court Decision', weight='bold', fontdict={'size':11})
         plt.subplots_adjust(left = 0.16, bottom=0.16, top=0.9)
-        plt.show()
+        plt.savefig("Topics" + '.png')
+        #plt.show()
 
     def __radar(self, words, title, subject):
 
