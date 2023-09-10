@@ -40,7 +40,7 @@ class Document:
     tokenizer = Tokenizer(nlp.vocab)
     nlp.add_pipe('sentencizer')
     #nlp.add_pipe(nlp.create_pipe('sentencizer'))
-    os.chdir('/home/saul/Business')
+    os.chdir('/home/saul/Desktop/generative-AI/document_analysis/')
     numberofTopics = 5
     svdTopics = []
     nmfTopics = []
