@@ -1,4 +1,9 @@
-import PyPDF2
+import pdfminer
+from pdfminer.converter import TextConverter
+from pdfminer.pdfinterp import PDFPageInterpreter
+from pdfminer.pdfinterp import PDFResourceManager
+from pdfminer.pdfpage import PDFPage
+from spacy.matcher import PhraseMatcher, Matcher
 import spacy
 import os
 
@@ -24,7 +29,7 @@ def perform_topic_analysis(text):
     return topics
 
 def main():
-	os.chdir('/home/saul/Desktop/generative-AI/document_analysis')
+    os.chdir('/home/saul/Desktop/generative-AI/document_analysis')
     pdf_path = "Redacted Indictment Translation.pdf"  # Replace with the new PDF file
     text = extract_text_from_pdf(pdf_path)
 
