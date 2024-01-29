@@ -24,6 +24,7 @@ def perform_topic_analysis(text):
     return topics
 
 def main():
+	os.chdir('/home/saul/Desktop/generative-AI/document_analysis')
     pdf_path = "Redacted Indictment Translation.pdf"  # Replace with the new PDF file
     text = extract_text_from_pdf(pdf_path)
 
