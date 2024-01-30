@@ -14,11 +14,10 @@ def extract_text_from_pdf(pdf_path):
                                        check_extractable=True):
 										   page_interpreter.process_page(page)
          text = fake_file_handle.getvalue() # whole document in text
-            #print('Text ', text)
-            
+            #print('Text ', text)       
          list.append(text)
 
-    return text
+	return text
 
 def perform_topic_analysis(text):
     nlp = spacy.load("en_core_web_sm")
