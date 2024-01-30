@@ -27,8 +27,8 @@ def extract_text_from_pdf(pdf_path):
             #print('Text ', text)       
          list.append(text)
          
-    csv_writer = csv.writer(sys.stdout, delimiter='\t')
-    with open(r'/home/saul/Desktop/generative-AI/document_analysis/court_document_topics.txt', 'w') as fp:
+	csv_writer = csv.writer(sys.stdout, delimiter='\t')
+	with open(r'/home/saul/Desktop/generative-AI/document_analysis/court_document_topics.txt', 'w') as fp:
 		for item in text:
 			# write each item on a new line
             #item = item + ' '
