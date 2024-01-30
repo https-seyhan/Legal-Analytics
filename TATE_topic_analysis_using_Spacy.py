@@ -7,6 +7,7 @@ from spacy.matcher import PhraseMatcher, Matcher
 import spacy
 import os
 import io
+import csv
 
 def extract_text_from_pdf(pdf_path):
 	list = []
@@ -25,6 +26,14 @@ def extract_text_from_pdf(pdf_path):
          text = fake_file_handle.getvalue() # whole document in text
             #print('Text ', text)       
          list.append(text)
+         
+     csv_writer = csv.writer(sys.stdout, delimiter='\t')
+     with open(r'/home/saul/Desktop/generative-AI/document_analysis/court_document_topics.txt', 'w') as fp:
+		 for item in text:
+			 # write each item on a new line
+             #item = item + ' '
+             fp.write("%s\n" % item)
+             #fp.write("%s" % item)
 
 	return text
 
