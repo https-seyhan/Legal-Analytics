@@ -8,8 +8,8 @@ import spacy
 import os
 
 def extract_text_from_pdf(pdf_path):
-	 laparams = pdfminer.layout.LAParams()
-     setattr(laparams, 'all_texts', True)
+	laparams = pdfminer.layout.LAParams()
+	setattr(laparams, 'all_texts', True)
         
     fake_file_handle = io.StringIO()
     converter = TextConverter(sresource_manager, fake_file_handle, laparams=laparams)
