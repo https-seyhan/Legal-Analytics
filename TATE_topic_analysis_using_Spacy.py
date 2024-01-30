@@ -32,7 +32,7 @@ def extract_text_from_pdf(pdf_path):
 		for item in text:
 			# write each item on a new line
             #item = item + ' '
-            fp.write("%s\n" % item)
+			fp.write("%s\n" % item)
             #fp.write("%s" % item)
 
 	return text
