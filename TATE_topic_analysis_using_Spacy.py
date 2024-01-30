@@ -8,12 +8,16 @@ import spacy
 import os
 
 def extract_text_from_pdf(pdf_path):
-    text = ""
-    with open(pdf_path, "rb") as file:
-        pdf_reader = PyPDF2.PdfFileReader(file)
-        for page_num in range(pdf_reader.numPages):
-            page = pdf_reader.getPage(page_num)
-            text += page.extractText()
+	with open(fileName, 'rb') as fh:
+         for page in PDFPage.get_pages(fh, 
+                                       caching=True,
+                                       check_extractable=True):
+				page_interpreter.process_page(page)
+         text = fake_file_handle.getvalue() # whole document in text
+            #print('Text ', text)
+            
+         list.append(text)
+
     return text
 
 def perform_topic_analysis(text):
