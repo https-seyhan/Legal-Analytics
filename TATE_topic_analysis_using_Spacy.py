@@ -8,6 +8,7 @@ import spacy
 import os
 import io
 import csv
+import sys
 
 def extract_text_from_pdf(pdf_path):
 	list = []
