@@ -8,6 +8,12 @@ import spacy
 import os
 
 def extract_text_from_pdf(pdf_path):
+	 laparams = pdfminer.layout.LAParams()
+     setattr(laparams, 'all_texts', True)
+        
+    fake_file_handle = io.StringIO()
+    converter = TextConverter(sresource_manager, fake_file_handle, laparams=laparams)
+	page_interpreter = PDFPageInterpreter(resource_manager, converter)
 	with open(pdf_path, 'rb') as fh:
          for page in PDFPage.get_pages(fh, 
                                        caching=True,
