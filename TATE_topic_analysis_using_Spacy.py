@@ -6,6 +6,7 @@ from pdfminer.pdfpage import PDFPage
 from spacy.matcher import PhraseMatcher, Matcher
 import spacy
 import os
+import io
 
 def extract_text_from_pdf(pdf_path):
 	laparams = pdfminer.layout.LAParams()
