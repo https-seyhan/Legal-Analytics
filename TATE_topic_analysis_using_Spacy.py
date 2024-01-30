@@ -60,6 +60,13 @@ def main():
     print("Extracted Topics:")
     for i, topic in enumerate(topics, start=1):
         print(f"{i}. {topic}")
+    csv_writer = csv.writer(sys.stdout, delimiter='\t')
+    with open(r'/home/saul/Desktop/generative-AI/document_analysis/text.txt', 'w') as fp:
+            for topic in topics:
+                # write each item on a new line
+                #item = item + ' '
+                fp.write("%s\n" % topic)
+                #fp.write("%s" % item)
 
 if __name__ == "__main__":
     main()
