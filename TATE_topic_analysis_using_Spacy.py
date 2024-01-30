@@ -12,7 +12,7 @@ def extract_text_from_pdf(pdf_path):
          for page in PDFPage.get_pages(fh, 
                                        caching=True,
                                        check_extractable=True):
-				page_interpreter.process_page(page)
+										   page_interpreter.process_page(page)
          text = fake_file_handle.getvalue() # whole document in text
             #print('Text ', text)
             
