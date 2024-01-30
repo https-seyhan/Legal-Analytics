@@ -8,7 +8,7 @@ import spacy
 import os
 
 def extract_text_from_pdf(pdf_path):
-	with open(fileName, 'rb') as fh:
+	with open(pdf_path, 'rb') as fh:
          for page in PDFPage.get_pages(fh, 
                                        caching=True,
                                        check_extractable=True):
