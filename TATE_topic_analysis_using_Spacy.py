@@ -32,7 +32,7 @@ def extract_text_from_pdf(pdf_path):
 	with open(r'/home/saul/Desktop/generative-AI/document_analysis/court_document_topics.txt', 'w') as fp:
 		for item in text:
 			# write each item on a new line
-            item = item + ' '
+			item = item + ' '
 			fp.write("%s\n" % item)
             #fp.write("%s" % item)
 
