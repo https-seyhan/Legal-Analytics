@@ -9,6 +9,7 @@ import os
 import io
 
 def extract_text_from_pdf(pdf_path):
+	resource_manager = PDFResourceManager()
 	laparams = pdfminer.layout.LAParams()
 	setattr(laparams, 'all_texts', True)
         
